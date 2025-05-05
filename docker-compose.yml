@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+
+  # MySQL Database
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/mysql:/docker-entrypoint-initdb.d
+
+  # MongoDB
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./docker/mongo:/data/db
+
+  # Neo4j
+  neo4j:
+    image: neo4j:latest
+    environment:
+      - NEO4J_AUTH=neo4j/password
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+
+  # User Service
+  user-service:
+    build: ./backend/user-service
+    depends_on:
+      - mysql
+    ports:
+      - "8081:8080"
+
+  # Booking Service
+  booking-service:
+    build: ./backend/booking-service
+    depends_on:
+      - mysql
+    ports:
+      - "8082:8080"
+
+  # Payement Service
+  payement-service:
+    build: ./backend/payement-service
+    depends_on:
+      - mysql
+    ports:
+      - "8083:8080"
+
+  # Review Service
+  review-service:
+    build: ./backend/review-service
+    depends_on:
+      - mongodb
+    ports:
+      - "8084:8080"
+
+  # Salon Service
+  salon-service:
+    build: ./backend/salon-service
+    depends_on:
+      - neo4j
+    ports:
+      - "8085:8080"
+
+  # Notification Service
+  notification-service:
+    build: ./backend/notification-service
+    ports:
+      - "8086:8080"
+
+  # Frontend
+  frontend:
+    build: ./frontend/react-app
+    ports:
+      - "3000:80"
