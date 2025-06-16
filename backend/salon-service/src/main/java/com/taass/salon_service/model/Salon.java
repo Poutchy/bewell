@@ -7,8 +7,9 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
-import java.util.HashMap;
 import java.util.List;
+
+import static org.springframework.data.neo4j.core.schema.Relationship.Direction.OUTGOING;
 
 @Node
 @Data
@@ -30,13 +31,12 @@ public class Salon {
 
     private String pricingRange;
 
-    @Relationship(type = "HAS_OPENING_HOURS")
-    private List<OpeningHour> openingHours;
+    private List<String> openingHours;
 
     private Double rating;
     private Integer totalReviews;
 
-    @Relationship(type = "OFFERS")
+    @Relationship(type = "OFFERS", direction = OUTGOING)
     private List<Service> services;
 
     private String website;

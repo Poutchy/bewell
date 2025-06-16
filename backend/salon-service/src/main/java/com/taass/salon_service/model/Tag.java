@@ -8,10 +8,8 @@ import org.springframework.data.neo4j.core.schema.Node;
 @Node
 @Data
 public class Tag {
-
     @Id
     @GeneratedValue
     private Long id;
     private String tagName;
-
 }
