@@ -12,8 +12,7 @@ public class ServiceDTO {
     private String description;
     private Integer price;
     private Duration duration;
-    private boolean isAvailable;
+    private boolean isAvailable = true;
     private Double discount;
     private List<Tag> tags;
-
 }

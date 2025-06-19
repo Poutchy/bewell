@@ -25,7 +25,7 @@ public class Service {
 
     private String duration;
 
-    private boolean isAvailable;
+    private boolean isAvailable = true;
 
     private Double discount;
 
