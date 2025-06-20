@@ -1,7 +1,6 @@
 package com.taass.salon_service.model;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -13,7 +12,6 @@ import static org.springframework.data.neo4j.core.schema.Relationship.Direction.
 
 @Node
 @Data
-@NoArgsConstructor
 public class Salon {
 
     @Id

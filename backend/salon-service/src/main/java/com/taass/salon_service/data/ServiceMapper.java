@@ -9,7 +9,6 @@ import java.time.Duration;
 
 @Mapper(componentModel = "spring")
 public interface ServiceMapper {
-
     @Mapping(target = "duration", source = "duration", qualifiedByName = "toDuration")
     ServiceDTO toDTO(Service service);
 
@@ -25,5 +24,4 @@ public interface ServiceMapper {
     default String fromDuration(Duration duration) {
         return duration != null ? duration.toString() : null;
     }
-
 }

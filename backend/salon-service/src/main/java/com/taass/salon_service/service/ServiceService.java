@@ -2,30 +2,55 @@ package com.taass.salon_service.service;
 
 import com.taass.salon_service.data.ServiceDTO;
 import com.taass.salon_service.data.ServiceMapper;
+import com.taass.salon_service.data.TagDTO;
 import com.taass.salon_service.exception.ServiceNotFoundException;
+import com.taass.salon_service.model.Tag;
 import com.taass.salon_service.repository.ServiceRepository;
+import com.taass.salon_service.repository.TagRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 @Service
 public class ServiceService {
     private final ServiceRepository serviceRepository;
+    private final TagRepository tagRepository;
     private final ServiceMapper serviceMapper;
     Logger logger = Logger.getLogger(getClass().getName());
 
     @Autowired
-    public ServiceService(ServiceRepository serviceRepository, ServiceMapper serviceMapper) {
+    public ServiceService(ServiceRepository serviceRepository, TagRepository tagRepository, ServiceMapper serviceMapper) {
         this.serviceRepository = serviceRepository;
+        this.tagRepository = tagRepository;
         this.serviceMapper = serviceMapper;
     }
 
     public com.taass.salon_service.model.Service addService(ServiceDTO serviceDTO) {
-        logger.info("Adding service " + serviceDTO);
+
+        logger.info("Adding service: " + serviceDTO);
+
         validateServiceDTO(serviceDTO);
+
+        List<Tag> tags = new ArrayList<>();
+
+        if (serviceDTO.getTags() != null && !serviceDTO.getTags().isEmpty()) {
+            for (TagDTO tagDTO : serviceDTO.getTags()) {
+                if (tagDTO != null) {
+                    Tag tag = tagRepository.findById(tagDTO.getId())
+                            .orElseThrow(() -> new ServiceNotFoundException(tagDTO.getId().toString()));
+                    serviceRepository.createHasTagRelationship(serviceDTO.getId(), tag.getId());
+                    tags.add(tag);
+                } else {
+                    throw new IllegalArgumentException("Tag ID is required for existing tags");
+                }
+            }
+        }
+
         com.taass.salon_service.model.Service service = serviceMapper.toEntity(serviceDTO);
+        service.setTags(tags);
         return serviceRepository.save(service);
     }
 
@@ -50,7 +75,7 @@ public class ServiceService {
         validateServiceDTO(updatedServiceDTO);
 
         com.taass.salon_service.model.Service existingService = serviceRepository.findById(id)
-                .orElseThrow(() -> new ServiceNotFoundException("Service not found with id: " + id));
+                .orElseThrow(() -> new ServiceNotFoundException(id.toString()));
 
         com.taass.salon_service.model.Service serviceDTO = serviceMapper.toEntity(updatedServiceDTO);
 
@@ -69,7 +94,7 @@ public class ServiceService {
     public void deleteById(Long id) {
         logger.info("Deleting service by {id:" + id + "}");
         if (!serviceRepository.existsById(id)) {
-            throw new ServiceNotFoundException("Service not found with id: " + id);
+            throw new ServiceNotFoundException(id.toString());
         }
         serviceRepository.deleteById(id);
     }

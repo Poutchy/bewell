@@ -1,7 +1,6 @@
 package com.taass.salon_service.data;
 
 import com.taass.salon_service.model.OpeningHour;
-import com.taass.salon_service.model.Service;
 import lombok.Data;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public class SalonDTO {
     private List<OpeningHour> openingHours;
     private Double rating;
     private Integer totalReviews;
-    private List<Service> services;
+    private List<ServiceDTO> services;
     private String website;
     private List<String> socialMediaLinks;
     private Double latitude;

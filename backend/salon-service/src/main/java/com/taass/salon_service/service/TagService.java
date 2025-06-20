@@ -5,8 +5,8 @@ import com.taass.salon_service.model.Tag;
 import com.taass.salon_service.repository.TagRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TagService {
@@ -21,8 +21,9 @@ public class TagService {
         return tagRepository.save(tag);
     }
 
-    public Optional<Tag> getTagById(Long id) {
-        return tagRepository.findById(id);
+    public Tag getTagById(Long id) {
+        return tagRepository.findById(id)
+                .orElseThrow(() -> new TagNotFoundException(id.toString()));
     }
 
     public List<Tag> getAllTags() {
@@ -34,7 +35,7 @@ public class TagService {
         return tagRepository.findById(id).map(tag -> {
             tag.setTagName(updatedTag.getTagName());
             return tagRepository.save(tag);
-        }).orElseThrow(() -> new TagNotFoundException("Tag not found with id: " + id));
+        }).orElseThrow(() -> new TagNotFoundException(id.toString()));
     }
 
     @Transactional
@@ -42,7 +43,7 @@ public class TagService {
         if (tagRepository.existsById(id)) {
             tagRepository.deleteById(id);
         } else {
-            throw new TagNotFoundException("Tag not found with id: " + id);
+            throw new TagNotFoundException(id.toString());
         }
     }
 }

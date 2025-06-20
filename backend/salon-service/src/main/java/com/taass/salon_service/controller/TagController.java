@@ -1,8 +1,8 @@
 package com.taass.salon_service.controller;
 
+import com.taass.salon_service.exception.TagNotFoundException;
 import com.taass.salon_service.model.Tag;
 import com.taass.salon_service.service.TagService;
-import com.taass.salon_service.exception.TagNotFoundException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +28,11 @@ public class TagController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Tag> getTagById(@PathVariable Long id) {
-        return tagService.getTagById(id)
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new TagNotFoundException("Tag not found with id: " + id));
+        Tag tag = tagService.getTagById(id);
+        if (tag == null) {
+            throw new TagNotFoundException("Tag not found with id: " + id);
+        }
+        return ResponseEntity.ok(tag);
     }
 
     @GetMapping

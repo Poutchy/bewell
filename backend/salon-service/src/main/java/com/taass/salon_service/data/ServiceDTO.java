@@ -1,6 +1,5 @@
 package com.taass.salon_service.data;
 
-import com.taass.salon_service.model.Tag;
 import lombok.Data;
 import java.time.Duration;
 import java.util.List;
@@ -14,5 +13,5 @@ public class ServiceDTO {
     private Duration duration;
     private boolean isAvailable = true;
     private Double discount;
-    private List<Tag> tags;
+    private List<TagDTO> tags;
 }
