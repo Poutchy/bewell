@@ -33,16 +33,7 @@ public interface SalonMapper {
             return Collections.emptyList();
         }
         return openingHours.stream()
-                .map(oh -> {
-                    if (oh.getOpen() == null || oh.getClose() == null) {
-                        return oh.getDay().toString().substring(0,1) + oh.getDay().toString().substring(1).toLowerCase() + ": Closed";
-                    } else {
-                        // Format time back to "h:mm a" string
-                        String openStr = oh.getOpen().format(OpeningHour.getTimeFormatter());
-                        String closeStr = oh.getClose().format(OpeningHour.getTimeFormatter());
-                        return oh.getDay().toString().substring(0,1) + oh.getDay().toString().substring(1).toLowerCase() + ": " + openStr + " - " + closeStr;
-                    }
-                })
+                .map(OpeningHour::toFormattedString)
                 .toList();
     }
 }

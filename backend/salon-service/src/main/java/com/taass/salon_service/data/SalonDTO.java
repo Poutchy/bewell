@@ -1,6 +1,7 @@
 package com.taass.salon_service.data;
 
 import com.taass.salon_service.model.OpeningHour;
+import com.taass.salon_service.model.TimeSlot;
 import lombok.Data;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class SalonDTO {
     private String email;
     private String pricingRange;
     private List<OpeningHour> openingHours;
+    private List<TimeSlot> timeSlots;
     private Double rating;
     private Integer totalReviews;
     private List<ServiceDTO> services;

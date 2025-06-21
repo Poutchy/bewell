@@ -9,4 +9,10 @@ public interface SalonRepository extends Neo4jRepository<Salon, Long> {
             "WHERE id(sal) = $salonId AND id(srv) = $serviceId " +
             "CREATE (sal)-[:OFFERS]->(srv)")
     void createOffersRelationship(Long salonId, Long serviceId);
+
+    @Query("MATCH (s:Salon), (t:TimeSlot) " +
+            "WHERE id(s) = $salonId AND id(t) = $timeSlotId " +
+            "MERGE (s)-[:HAS_TIME_SLOT]->(t) " +
+            "RETURN s, t")
+    void createHasTimeSlotRelationship(Long salonId, Long timeSlotId);
 }

@@ -5,8 +5,10 @@ import com.taass.salon_service.data.SalonMapper;
 import com.taass.salon_service.data.ServiceDTO;
 import com.taass.salon_service.exception.SalonNotFoundException;
 import com.taass.salon_service.model.Salon;
+import com.taass.salon_service.model.TimeSlot;
 import com.taass.salon_service.repository.SalonRepository;
 import com.taass.salon_service.repository.ServiceRepository;
+import com.taass.salon_service.repository.TimeSlotRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,12 +21,14 @@ public class SalonService {
 
     private final SalonRepository salonRepository;
     private final ServiceRepository serviceRepository;
+    private final TimeSlotRepository timeSlotRepository;
     private final SalonMapper salonMapper;
     private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public SalonService(SalonRepository salonRepository, ServiceRepository serviceRepository, SalonMapper salonMapper) {
+    public SalonService(SalonRepository salonRepository, ServiceRepository serviceRepository,TimeSlotRepository timeSlotRepository, SalonMapper salonMapper) {
         this.salonRepository = salonRepository;
         this.serviceRepository = serviceRepository;
+        this.timeSlotRepository = timeSlotRepository;
         this.salonMapper = salonMapper;
     }
 
@@ -34,23 +38,12 @@ public class SalonService {
 
         validateSalonDTO(salonDTO);
 
-        List<com.taass.salon_service.model.Service> services = new ArrayList<>();
-
-        if (salonDTO.getServices() != null && !salonDTO.getServices().isEmpty()) {
-            for (ServiceDTO serviceDTO : salonDTO.getServices()) {
-                if (serviceDTO != null) {
-                    com.taass.salon_service.model.Service service = serviceRepository.findById(serviceDTO.getId())
-                            .orElseThrow(() -> new IllegalArgumentException("Service with ID " + serviceDTO.getId() + " not found"));
-                    salonRepository.createOffersRelationship(salonDTO.getId(), service.getId());
-                    services.add(service);
-                } else {
-                    throw new IllegalArgumentException("Service ID is required for existing services");
-                }
-            }
-        }
+        List<com.taass.salon_service.model.Service> services = processServices(salonDTO.getServices(), salonDTO.getId());
+        List<TimeSlot> timeSlots = processTimeSlots(salonDTO.getTimeSlots(), salonDTO.getId());
 
         Salon salon = salonMapper.toEntity(salonDTO);
         salon.setServices(services);
+        salon.setTimeSlots(timeSlots);
         return salonRepository.save(salon);
     }
 
@@ -79,36 +72,12 @@ public class SalonService {
 
         Salon salon = salonMapper.toEntity(updatedSalonDTO);
 
-        List<com.taass.salon_service.model.Service> services = new ArrayList<>();
+        List<com.taass.salon_service.model.Service> services = processServices(updatedSalonDTO.getServices(), updatedSalonDTO.getId());
+        List<TimeSlot> timeSlots = processTimeSlots(updatedSalonDTO.getTimeSlots(), updatedSalonDTO.getId());
 
-        if (updatedSalonDTO.getServices() != null && !updatedSalonDTO.getServices().isEmpty()) {
-            for (ServiceDTO serviceDTO : updatedSalonDTO.getServices()) {
-                if (serviceDTO != null) {
-                    com.taass.salon_service.model.Service service = serviceRepository.findById(serviceDTO.getId())
-                            .orElseThrow(() -> new IllegalArgumentException("Service with ID " + serviceDTO.getId() + " not found"));
-                    // Create or ensure the relationship exists
-                    salonRepository.createOffersRelationship(salon.getId(), service.getId());
-                    services.add(service);
-                } else {
-                    throw new IllegalArgumentException("Service ID is required for existing services");
-                }
-            }
-        }
-
-        existingSalon.setName(salon.getName());
-        existingSalon.setDescription(salon.getDescription());
-        existingSalon.setAddress(salon.getAddress());
-        existingSalon.setPhone(salon.getPhone());
-        existingSalon.setEmail(salon.getEmail());
-        existingSalon.setPricingRange(salon.getPricingRange());
-        existingSalon.setOpeningHours(salon.getOpeningHours());
-        existingSalon.setLatitude(salon.getLatitude());
-        existingSalon.setLongitude(salon.getLongitude());
-        existingSalon.setServices(salon.getServices());
-        existingSalon.setWebsite(salon.getWebsite());
-        existingSalon.setSocialMediaLinks(salon.getSocialMediaLinks());
-        existingSalon.setImageUrls(salon.getImageUrls());
+        updateSalonFields(existingSalon, salon);
         existingSalon.setServices(services);
+        existingSalon.setTimeSlots(timeSlots);
 
         return salonRepository.save(existingSalon);
     }
@@ -138,5 +107,54 @@ public class SalonService {
         if (salonDTO.getLatitude() == null || salonDTO.getLongitude() == null) {
             throw new IllegalArgumentException("Salon location (latitude and longitude) must not be null");
         }
+    }
+
+    private void updateSalonFields(Salon existingSalon, Salon updatedSalon) {
+        existingSalon.setName(updatedSalon.getName());
+        existingSalon.setDescription(updatedSalon.getDescription());
+        existingSalon.setAddress(updatedSalon.getAddress());
+        existingSalon.setPhone(updatedSalon.getPhone());
+        existingSalon.setEmail(updatedSalon.getEmail());
+        existingSalon.setPricingRange(updatedSalon.getPricingRange());
+        existingSalon.setOpeningHours(updatedSalon.getOpeningHours());
+        existingSalon.setLatitude(updatedSalon.getLatitude());
+        existingSalon.setLongitude(updatedSalon.getLongitude());
+        existingSalon.setWebsite(updatedSalon.getWebsite());
+        existingSalon.setSocialMediaLinks(updatedSalon.getSocialMediaLinks());
+        existingSalon.setImageUrls(updatedSalon.getImageUrls());
+    }
+
+    private List<com.taass.salon_service.model.Service> processServices(List<ServiceDTO> serviceDTOs, Long salonId) {
+        List<com.taass.salon_service.model.Service> services = new ArrayList<>();
+        if (serviceDTOs != null && !serviceDTOs.isEmpty()) {
+            for (ServiceDTO serviceDTO : serviceDTOs) {
+                if (serviceDTO != null) {
+                    com.taass.salon_service.model.Service service = serviceRepository.findById(serviceDTO.getId())
+                            .orElseThrow(() -> new IllegalArgumentException("Service with ID " + serviceDTO.getId() + " not found"));
+                    salonRepository.createOffersRelationship(salonId, service.getId());
+                    services.add(service);
+                } else {
+                    throw new IllegalArgumentException("Service ID is required for existing services");
+                }
+            }
+        }
+        return services;
+    }
+
+    private List<TimeSlot> processTimeSlots(List<TimeSlot> timeSlotDTOs, Long salonId) {
+        List<TimeSlot> timeSlots = new ArrayList<>();
+        if (timeSlotDTOs != null && !timeSlotDTOs.isEmpty()) {
+            for (TimeSlot timeSlotDTO : timeSlotDTOs) {
+                if (timeSlotDTO != null) {
+                    TimeSlot savedTimeSlot = timeSlotRepository.findById(timeSlotDTO.getId())
+                            .orElseThrow(() -> new IllegalArgumentException("Time slot with ID " + timeSlotDTO.getId() + " not found"));
+                    salonRepository.createHasTimeSlotRelationship(salonId, savedTimeSlot.getId());
+                    timeSlots.add(savedTimeSlot);
+                } else {
+                    throw new IllegalArgumentException("TimeSlot details are required for adding TimeSlots");
+                }
+            }
+        }
+        return timeSlots;
     }
 }

@@ -63,6 +63,17 @@ public class OpeningHour {
         }
     }
 
+    public static String toFormattedString(OpeningHour input) {
+        if (input.getOpen() == null || input.getClose() == null) {
+            return input.getDay().toString().substring(0,1) + input.getDay().toString().substring(1).toLowerCase() + ": Closed";
+        } else {
+            // Format time back to "h:mm a" string
+            String openStr = input.getOpen().format(getTimeFormatter());
+            String closeStr = input.getClose().format(getTimeFormatter());
+            return input.getDay().toString().substring(0,1) + input.getDay().toString().substring(1).toLowerCase() + ": " + openStr + " - " + closeStr;
+        }
+    }
+
     private static DayOfWeek parseDayOfWeek(String dayStr) {
         switch(dayStr.toLowerCase()) {
             case "monday": return DayOfWeek.MONDAY;

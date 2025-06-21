@@ -30,6 +30,8 @@ public class Salon {
     private String pricingRange;
 
     private List<String> openingHours;
+    @Relationship(type = "HAS_TIMESLOT", direction = OUTGOING)
+    private List<TimeSlot> timeSlots;
 
     private Double rating;
     private Integer totalReviews;
