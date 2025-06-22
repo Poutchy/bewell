@@ -4,6 +4,9 @@ import com.taass.user_service.model.Client;
 import com.taass.user_service.repository.ClientRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.logging.Logger;
+
 /**
  * Service class for managing Client operations.
  * Provides methods to add, retrieve, and delete Clients.
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClientService {
     private final ClientRepository clientRepository;
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
     /**
      * Constructor to initialize the ClientService with the ClientRepository.
@@ -27,8 +31,9 @@ public class ClientService {
      * @param client the Client to add
      * @return the added Client
      */
+
     public Client addClient(Client client) {
-        System.out.println("Adding client: " + client);
+        logger.info("Adding client: " + client.toString());
         return clientRepository.save(client);
     }
 
@@ -50,5 +55,9 @@ public class ClientService {
      */
     public void deleteClientWithEmail(String email) {
         clientRepository.deleteClientByEmail(email);
+    }
+
+    public List<Client> getClients() {
+        return clientRepository.findAll();
     }
 }
