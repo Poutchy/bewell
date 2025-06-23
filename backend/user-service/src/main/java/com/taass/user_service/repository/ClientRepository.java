@@ -17,6 +17,14 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
      */
     Client findClientByEmail(String email);
 
+    /**
+     * Finds a Client by their id.
+     *
+     * @param id the email of the Client to find
+     * @return the Client with the specified id
+     */
+    Client findClientById(int id);
+
 
     /**
      * Deletes a Client by their email.
