@@ -1,6 +1,8 @@
 package com.taass.booking_service.service;
 
+import com.taass.booking_service.BookingNotFoundException;
 import com.taass.booking_service.dto.BookingDTO;
+import com.taass.booking_service.dto.BookingRequest;
 import com.taass.booking_service.model.Booking;
 import com.taass.booking_service.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,16 +18,16 @@ import java.util.List;
 public class BookingService {
     private final BookingRepository bookingRepository;
 
-    public void addBooking(BookingDTO bookingDTO) {
+    public void addBooking(BookingRequest bookingRequest) {
         Booking booking = Booking.builder()
-                .salonId(bookingDTO.getSalonId())
-                .tStart(bookingDTO.getTStart())
-                .tEnd(bookingDTO.getTEnd())
-                .slotId(bookingDTO.getSlotId())
-                .clientId(bookingDTO.getClientId())
-                .employeeId(bookingDTO.getEmployeeId())
-                .serviceId(bookingDTO.getServiceId())
-                .payed(bookingDTO.getPayed())
+                .salonId(bookingRequest.getSalonId())
+                .tStart(bookingRequest.getStart())
+                .tEnd(bookingRequest.getEnd())
+                .slotId(bookingRequest.getSlotId())
+                .clientId(bookingRequest.getClientId())
+                .employeeId(bookingRequest.getEmployeeId())
+                .serviceId(bookingRequest.getServiceId())
+                .payed(bookingRequest.getPayed())
                 .build();
         bookingRepository.save(booking);
         log.info("Booking added: {}", booking.getId());
@@ -33,7 +35,7 @@ public class BookingService {
 
     public BookingDTO getBookingById(Long id) {
         Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
+                .orElseThrow(() -> new BookingNotFoundException(id.toString()));
         return mapToBookingDTO(booking);
     }
 
