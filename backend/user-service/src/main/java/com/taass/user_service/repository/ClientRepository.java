@@ -32,4 +32,6 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
      * @param email the email of the Client to delete
      */
     void deleteClientByEmail(String email);
+
+    void deleteClientById(Integer id);
 }

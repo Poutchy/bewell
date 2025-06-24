@@ -4,6 +4,7 @@ import com.taass.user_service.dto.ClientDTO;
 import com.taass.user_service.dto.ClientRequest;
 import com.taass.user_service.model.Client;
 import com.taass.user_service.repository.ClientRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -98,6 +99,11 @@ public class ClientService {
      */
     public void deleteClientWithEmail(String email) {
         clientRepository.deleteClientByEmail(email);
+    }
+
+    @Transactional
+    public void deleteClientWithId(Integer id) {
+        clientRepository.deleteClientById(id);
     }
 
     /**

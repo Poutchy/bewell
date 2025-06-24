@@ -77,6 +77,11 @@ public class ClientController {
         clientService.deleteClientWithEmail(email);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public void deleteClient(@PathVariable Integer id) {
+        clientService.deleteClientWithId(id);
+    }
+
     /**
      * Updates a Client.
      *
