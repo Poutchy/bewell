@@ -1,42 +1,29 @@
-version: '3.8'
-
 services:
 
   # MySQL Database
   mysql:
     image: mysql:8
+    container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: app_db
+      - MYSQL_ROOT_PASSWORD
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - ./docker/mysql:/docker-entrypoint-initdb.d
-
-  # MongoDB
-  mongodb:
-    image: mongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./docker/mongo:/data/db
-
-  # Neo4j
-  neo4j:
-    image: neo4j:latest
-    environment:
-      - NEO4J_AUTH=neo4j/password
-    ports:
-      - "7474:7474"
-      - "7687:7687"
+      - mysql_data:/var/lib/mysql
 
   # User Service
   user-service:
     build: ./backend/user-service
+    container_name: bewell-user-service
     depends_on:
       - mysql
     ports:
-      - "8081:8080"
+      - "8088:8088"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/client_service
+      SPRING_DATASOURCE_USERNAME: ${APP_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${APP_DB_PASSWORD}
 
   # Booking Service
   booking-service:
@@ -44,31 +31,44 @@ services:
     depends_on:
       - mysql
     ports:
-      - "8082:8080"
+      - "8086:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/booking_service
+      SPRING_DATASOURCE_USERNAME: ${APP_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${APP_DB_PASSWORD}
 
-  # Payement Service
-  payement-service:
-    build: ./backend/payement-service
+  # Payment Service
+  payment-service:
+    build: ./backend/payment-service
     depends_on:
       - mysql
     ports:
-      - "8083:8080"
+      - "8087:8087"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/payment_service
+      SPRING_DATASOURCE_USERNAME: ${APP_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${APP_DB_PASSWORD}
 
   # Review Service
   review-service:
     build: ./backend/review-service
-    depends_on:
-      - mongodb
+    container_name: bewell-review-service
+    environment:
+      - SPRING_DATA_MONGODB_URI
     ports:
-      - "8084:8080"
+      - "8084:8084"
 
   # Salon Service
   salon-service:
     build: ./backend/salon-service
-    depends_on:
-      - neo4j
+    container_name: bewell-salon-service
+    environment:
+      - SPRING_NEO4J_URI
+      - SPRING_NEO4J_AUTHENTICATION_USERNAME
+      - SPRING_NEO4J_AUTHENTICATION_PASSWORD
+      - SPRING_AI_OPENAI_API_KEY
     ports:
-      - "8085:8080"
+      - "8085:8085"
 
   # Notification Service
   notification-service:
@@ -81,3 +81,6 @@ services:
     build: ./frontend/react-app
     ports:
       - "3000:80"
+
+volumes:
+  mysql_data:

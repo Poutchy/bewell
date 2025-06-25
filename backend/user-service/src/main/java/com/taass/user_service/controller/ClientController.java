@@ -1,8 +1,14 @@
 package com.taass.user_service.controller;
 
+import com.taass.user_service.dto.ClientDTO;
+import com.taass.user_service.dto.ClientRequest;
 import com.taass.user_service.model.Client;
 import com.taass.user_service.service.ClientService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Controller for managing operations on Clients.
@@ -10,28 +16,21 @@ import org.springframework.web.bind.annotation.*;
  */
 
 @RestController
-@RequestMapping("/api/clients")
+@RequestMapping("/api/client")
+@RequiredArgsConstructor
 public class ClientController {
-    private final ClientService clientService;
 
-    /**
-     * Constructor to initialize the ClientController with the ClientService.
-     *
-     * @param clientService the service for managing Clients
-     */
-    public ClientController(ClientService clientService) {
-        this.clientService = clientService;
-    }
+    private final ClientService clientService;
 
     /**
      * Adds a new Client.
      *
-     * @param client the Client to add
-     * @return the added Client
+     * @param clientRequest the Client to add
      */
-    @PostMapping
-    public Client addClient(Client client) {
-        return clientService.addClient(client);
+    @PostMapping("/addClient")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addClient(@RequestBody ClientRequest clientRequest) {
+        clientService.addClient(clientRequest);
     }
 
     /**
@@ -40,19 +39,58 @@ public class ClientController {
      * @param email the email of the Client to retrieve
      * @return the Client corresponding to the email
      */
-    @GetMapping
-    public Client getClient(String email) {
+    @GetMapping("/{email}")
+    public ClientDTO getClient(@PathVariable String email) {
         return clientService.getClientByEmail(email);
     }
+
+    /**
+     * Retrieves a Client by id.
+     *
+     * @param id the id of the Client to retrieve
+     * @return the Client corresponding to the id
+     */
+    @GetMapping("/getClient/{id}")
+    public ClientDTO getClientWithId(@PathVariable int id) {
+        return clientService.getClientById(id);
+    }
+
+    /**
+     * Retrieves all Client.
+     *
+     * @return All the Client
+     */
+    @GetMapping("/getAllClients")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ClientDTO> getAllClient() {
+        return clientService.getAllClients();
+    }
+
 
     /**
      * Deletes a Client by email.
      *
      * @param email the email of the Client to delete
      */
-    @DeleteMapping
-    public void deleteClient(String email) {
+    @DeleteMapping("/delete/{email}")
+    public void deleteClient(@PathVariable String email) {
         clientService.deleteClientWithEmail(email);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void deleteClient(@PathVariable Integer id) {
+        clientService.deleteClientWithId(id);
+    }
+
+    /**
+     * Updates a Client.
+     *
+     * @param client the Client to update
+     * @return the updated Client
+     */
+    @PutMapping("/update")
+    public ClientDTO updateClient(@RequestBody Client client) {
+        return clientService.update(client);
     }
 
 }
