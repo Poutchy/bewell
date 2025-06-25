@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+//import { Button } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -10,10 +10,10 @@ export function GoBack(){
     }
 
     return(<div className="go_back_button">
-        <Button
+        <button
             variant="contained"
             color="primary"
             onClick={ ret }
-        >return</Button>
+        >return</button>
     </div>)
 }

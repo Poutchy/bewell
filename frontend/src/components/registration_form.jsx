@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, TextField } from "@mui/material";
+// import { Button, TextField } from "@mui/material";
 import { creationCompte, authenticate, userFromToken} from "../services";
 import { useUpdateContext, isValideNom } from "../interface";
 import Select from 'react-select';
@@ -66,13 +66,16 @@ export function RegistrationForm(props) {
         return false;
     }
 
-    return(<div className="form_div">
+    return(
+        <div><p>Registration Form</p></div>
+        /*
+        <div className="form_div">
         <form onSubmit={handleSubmit} className="form">
             <div className="inputs-divs">
                 <div><TextField
                     required
                     id="last_name"
-                    label="Nom"
+                    label="Surname"
                     type="text"
                     name="last_name"
                     onChange={handleChange}
@@ -80,7 +83,7 @@ export function RegistrationForm(props) {
                 <div><TextField
                     required
                     id="first_name"
-                    label="Prénom"
+                    label="Name"
                     type="text"
                     name="first_name"
                     onChange={handleChange}
@@ -97,7 +100,7 @@ export function RegistrationForm(props) {
                 <div><TextField
                     required
                     id="password"
-                    label="mot de passe"
+                    label="Password"
                     type="password"
                     name="password"
                     onChange={handleChange}
@@ -130,7 +133,8 @@ export function RegistrationForm(props) {
             >inscription</Button>
         </form>
         { wrongInput && <p className="err_message"> { errMessage } </p>}
-    </div>)
+    </div>*/
+    )
 }
 
 /*

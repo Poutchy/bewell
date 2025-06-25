@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import './App.css';
 import {AppRoutes} from "./app_routes";
 import {ContextUser, initialState} from "./contexts/contextUser";
+import {Header} from "./components";
 
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
     return (
         <ContextUser.Provider value={{ userId, setUserId, userToken, setUserToken }}>
             <header>
+                <Header/>
             </header>
             <main>
                 <AppRoutes />

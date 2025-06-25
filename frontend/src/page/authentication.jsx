@@ -4,9 +4,11 @@ import "../css/auth.css";
 
 export function Authentication() {
 
-    return(<div className="main">
+    return(
+        <div><p>poc</p></div>
+        /*<div className="main">
         <h1 className="form_title">Authentification</h1>
         <AuthenticationForm />
         <HomeButton />
-    </div>)
+    </div>*/)
 }

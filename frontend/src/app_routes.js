@@ -1,6 +1,6 @@
 import {Route, Routes} from "react-router-dom";
-import {HomePage, NotFound, Reservation, SalonVisualisationPage} from "./page";
-import {ProtectedRoutes} from "./components/protected_route";
+import {HomePage, CreateReservation, NotFound, Reservation, Salon, Salons, Reviews, Review, Connection, Authentication, Registration} from "./page";
+import {ProtectedRoutes} from "./components";
 import {useIsConnected} from "./interface";
 
 export function AppRoutes() {
@@ -9,8 +9,12 @@ export function AppRoutes() {
     return (
         <Routes>
             <Route path="/" element={<HomePage/>}/>
-            <Route path="/salons" element={<SalonVisualisationPage/>}/>
+            <Route path="/salons" element={<Salons/>}/>
+            <Route path="/salon/:id" element={<Salon/>}/>
+            <Route path="/reviews" element={<Reviews/>} />
+            <Route path="/review/:id" element={<Review/>} />
             <Route element={ <ProtectedRoutes isAllowed={isConnected()} to={"/authentication"} /> }>
+                <Route path="/reservation" element={<CreateReservation />} />
                 <Route path="/reservation/:id" element={<Reservation/>} />
             </Route>
             <Route element={ <ProtectedRoutes isAllowed={!(isConnected())} to={"/"} /> }>
@@ -22,3 +26,10 @@ export function AppRoutes() {
         </Routes>
     )
 }
+
+/*
+                <Route path="/review" element={<CreateReview/>} />
+                <Route path="/reservations" element={<AllReservations/>} />
+
+
+ */

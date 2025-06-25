@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ContextUser, initialState } from "../contexts/context_user";
+import { ContextUser, initialState } from "../contexts/contextUser";
 
 const useUpdateContext = () => {
     const { setUserId, setUserToken } = useContext(ContextUser);

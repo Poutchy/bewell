@@ -4,11 +4,12 @@ import { GoBack, RegistrationForm } from "../components";
 import "../css/auth.css";
 
 export function Registration() {
-    const { state } = useLocation();
+    // const { state } = useLocation();
 
     return(<div className="main">
-        <h1 className="form_title">Inscription</h1>
-        <RegistrationForm mail={state.mail}/>
+        <h1 className="form_title">Registration</h1>
         <GoBack />
     </div>)
 }
+
+//<RegistrationForm mail={state.mail}/>
