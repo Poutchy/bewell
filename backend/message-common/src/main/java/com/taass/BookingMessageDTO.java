@@ -9,9 +9,6 @@ import java.io.Serializable;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class BookingMessageDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -20,9 +17,17 @@ public class BookingMessageDTO implements Serializable {
     private String tStart;
     private String tEnd;
     private Long slotId;
-    private Long clientId;
     private Long employeeId;
     private Long serviceId;
     private Boolean payed;
 
+    public BookingMessageDTO(Long salonId, String tStart, String tEnd, Long slotId, Long clientId, Long employeeId, Long serviceId, Boolean payed) {
+        this.salonId = salonId;
+        this.tStart = tStart;
+        this.tEnd = tEnd;
+        this.slotId = slotId;
+        this.employeeId = employeeId;
+        this.serviceId = serviceId;
+        this.payed = payed;
+    }
 }

@@ -63,7 +63,7 @@ public class BookingService {
                         savedBooking.getClientId(),
                         savedBooking.getEmployeeId(),
                         savedBooking.getServiceId(),
-                        savedBooking.getPayed()
+                       savedBooking.getPayed()
                 );
 
                 log.info("Booking {} approved. Publishing BookingMessageDTO to exchange '{}' with key '{}'",
@@ -71,9 +71,7 @@ public class BookingService {
 
                 rabbitTemplate.setMandatory(true);
 
-                rabbitTemplate.setReturnsCallback(ret -> {
-                    log.error("UNROUTED message {}", ret);
-                });
+                rabbitTemplate.setReturnsCallback(ret -> log.error("UNROUTED message {}", ret));
 
                 rabbitTemplate.setConfirmCallback((cd,ack,c) ->
                         log.info("Broker ack? {}  cause: {}", ack, c));
