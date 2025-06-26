@@ -1,5 +1,18 @@
 services:
 
+  # API Gateway
+  api-gateway:
+    container_name: api-gateway
+    build: ./backend/api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - review-service
+      - user-service
+      - booking-service
+      - salon-service
+
+
   # MySQL Database
   mysql:
     image: mysql:8
@@ -28,6 +41,7 @@ services:
   # Booking Service
   booking-service:
     build: ./backend/booking-service
+    container_name: bewell-booking-service
     depends_on:
       - mysql
     ports:
