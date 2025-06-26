@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: booking-service
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: ${SPRING_JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: ${SPRING_JPA_FORMAT_SQL:true}
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  sql:
+    init:
+      mode: always
+
+  session:
+    jdbc:
+      initialize-schema: always
+    # store-type: jdbc
+
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:rabbitmq}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME}
+    password: ${SPRING_RABBITMQ_PASSWORD}
+    template:
+      exchange: bewell.exchange
+      routing-key: rk.booking.booking-created
+      default-receive-queue: booking.booking-created
+
+app:
+  rabbitmq:
+    exchange: ${APP_RABBITMQ_EXCHANGE:bewell.exchange}
+    queue:
+      booking-created-queue: ${APP_RABBITMQ_QUEUE_READY_TICKET:booking.booking-created}
+    routingkey:
+      booking-created: ${APP_RABBITMQ_ROUTINGKEY_BOOKING_CREATED:rk.booking.booking-created}
+
+server:
+  port: ${SERVER_PORT:8082}
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+    it.unito.orderservice: ${LOGGING_LEVEL_ORDERSERVICE:DEBUG}

@@ -16,11 +16,11 @@ public class RabbitMQConfig {
     @Value("${app.rabbitmq.exchange}")
     private String exchangeName;
 
-    @Value("${app.rabbitmq.routingkey.ready-ticket}")
-    private String readyTicketRoutingKey;
+    @Value("${app.rabbitmq.routingkey.booking-created}")
+    private String bookingCreatedRoutingKey;
 
-    @Value("${app.rabbitmq.queue.ready-ticket}")
-    private String readyTicketQueue;
+    @Value("${app.rabbitmq.queue.booking-created-queue}")
+    private String bookingCreatedQueue;
 
     @Bean
     public Exchange BeWellExchange() {
@@ -28,15 +28,15 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    Queue readyTicketQueue() {
-        return new Queue(readyTicketQueue, true);
+    Queue bookingCreatedQueue() {
+        return new Queue(bookingCreatedQueue, true);
     }
 
     @Bean
-    public Binding readyTicketBinding(Queue readyTicketQueue, Exchange beWellExchange) {
-        return BindingBuilder.bind(readyTicketQueue)
+    public Binding readyTicketBinding(Queue bookingCreatedQueue, Exchange beWellExchange) {
+        return BindingBuilder.bind(bookingCreatedQueue)
                 .to(beWellExchange)
-                .with(readyTicketRoutingKey) // the routing key used by booking-service to send messages
+                .with(bookingCreatedRoutingKey) // the routing key used by booking-service to send messages
                 .noargs(); // Necessario per DirectExchange
     }
 
