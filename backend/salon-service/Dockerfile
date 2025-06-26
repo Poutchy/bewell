@@ -1,12 +1,11 @@
-# Use an official OpenJDK 17 runtime as a parent image
-FROM openjdk:25-jdk-slim
+# Use a lightweight base image with JDK 17
+FROM openjdk:21-jdk-slim
 
-# Set working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the built jar file into the container (you can change the name)
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+# Copy the built JAR file from the host to the container
+COPY target/salon-service-0.0.1-SNAPSHOT.jar /app/salon-service.jar
 
-# Run the jar file
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the application
+CMD ["java", "-jar", "/app/salon-service.jar"]
