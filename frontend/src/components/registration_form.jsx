@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-// import { Button, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { creationCompte, authenticate, userFromToken} from "../services";
 import { useUpdateContext, isValideNom } from "../interface";
 import Select from 'react-select';
 
 export function RegistrationForm(props) {
-    const [infos, setInfos] = useState({email: props.mail, first_name: "", last_name: "", password: "", password_conf: "", id_park_demande: ""});
+    const [infos, setInfos] = useState({email: props.mail, first_name: "", last_name: "", password: "", password_conf: ""});
     const [wrongInput, setWrongInput] = useState(false);
     const [errMessage, setErrMessage] = useState("");
     const updateContext = useUpdateContext();
@@ -67,8 +67,6 @@ export function RegistrationForm(props) {
     }
 
     return(
-        <div><p>Registration Form</p></div>
-        /*
         <div className="form_div">
         <form onSubmit={handleSubmit} className="form">
             <div className="inputs-divs">
@@ -115,14 +113,6 @@ export function RegistrationForm(props) {
                     onChange={handleChange}
                     onPaste={ noPaste }
                 /></div>
-                <div><Select
-                    required
-                    name="id_park_demande"
-                    className="select-park-abo"
-                    placeholder="parking demandé"
-                    options={ optParking }
-                    onChange={handleChangeSelect}
-                /></div>
 
             </div>
             <Button
@@ -133,7 +123,7 @@ export function RegistrationForm(props) {
             >inscription</Button>
         </form>
         { wrongInput && <p className="err_message"> { errMessage } </p>}
-    </div>*/
+    </div>
     )
 }
 

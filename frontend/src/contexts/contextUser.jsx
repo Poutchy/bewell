@@ -1,3 +1,4 @@
+import axios from "axios";
 import React from "react";
 
 const initialState = {
@@ -5,6 +6,8 @@ const initialState = {
     setUserId: valueId => {},
     userToken: "",
     setUserToken: valueToken => {},
+    userRole: undefined,
+    setUserRole: valueRole => {}
 };
 
 const ContextUser = React.createContext(initialState);

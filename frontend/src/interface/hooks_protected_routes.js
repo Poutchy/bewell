@@ -9,4 +9,12 @@ const useIsConnected = () => {
     return isConn;
 }
 
-export { useIsConnected }
+const useIsOK = () => {
+    const { userRole } = useContext(ContextUser);
+    function isConn(){
+        return userRole === "Client";
+    }
+    return isConn();
+}
+
+export { useIsConnected, useIsOK }

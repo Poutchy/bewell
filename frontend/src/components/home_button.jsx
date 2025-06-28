@@ -2,18 +2,18 @@ import { Button } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-export function GoBack(){
+export function HomeButton(){
     const navigate = useNavigate();
 
-    const ret = () => {
-        navigate(-1);
+    const retour = () => {
+        navigate("/");
     }
 
-    return(<div className="go_back_button">
+    return(<div className="home-button">
         <Button
             variant="contained"
             color="primary"
-            onClick={ ret }
-        >return</Button>
+            onClick={ retour }
+        >Home</Button>
     </div>)
 }
