@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,8 @@ import java.util.List;
 public class BookingService {
     private final BookingRepository bookingRepository;
     private final RabbitTemplate rabbitTemplate;
+    private final WebClient clientWebClient;
+    private final WebClient salonWebClient;
     private BookingStatus bookingStatus;
 
     @Value("${app.rabbitmq.exchange}")
@@ -260,106 +264,82 @@ public class BookingService {
 
     private boolean validateSalon(Long salonId) {
         log.info("Calling Salon Service to validate salon {}", salonId);
-//        try {
-//            restaurantWebClient.get()
-//                    .uri("/restaurants/{id}/validate", salonId)
-//                    .retrieve() // Ottiene la risposta
-//                    .toBodilessEntity() // Non ci interessa il body, solo lo status code
-//                    .block(); // Blocca finché la chiamata non è completa (ATTENZIONE: non ideale in scenari high-concurrency)
-//            log.info("Restaurant {} validation successful", salonId);
-//            return true;
-//        } catch (WebClientResponseException e) {
-//            log.warn("Restaurant validation failed for {}: Status Code {}", salonId, e.getStatusCode(), e);
-//            // Potremmo differenziare 404 da altri errori (5xx)
-//            return false;
-//        } catch (Exception e) {
-//            log.error("Error calling restaurant service for restaurant {}", salonId, e);
-//            return false; // Considera qualsiasicccccc       fd eccezione come fallimento
-//        }
-        return true;
+        try {
+            salonWebClient.get()
+                    .uri("/api/salons/{id}", salonId)
+                    .retrieve() // Ottiene la risposta
+                    .toBodilessEntity() // Non ci interessa il body, solo lo status code
+                    .block(); // Blocca finché la chiamata non è completa (ATTENZIONE: non ideale in scenari high-concurrency)
+            log.info("Salon {} validation successful", salonId);
+            return true;
+        } catch (WebClientResponseException e) {
+            log.warn("Salon validation failed for {}: Status Code {}", salonId, e.getStatusCode(), e);
+            return false;
+        } catch (Exception e) {
+            log.error("Error calling Salon service for Salon {}", salonId, e);
+            return false;
+        }
     }
 
     private boolean validateSlot(Long slotId) {
         log.info("Calling Salon Service to validate slot {}", slotId);
-//        try {
-//            restaurantWebClient.get()
-//                    .uri("/restaurants/{id}/validate", slotId)
-//                    .retrieve() // Ottiene la risposta
-//                    .toBodilessEntity() // Non ci interessa il body, solo lo status code
-//                    .block(); // Blocca finché la chiamata non è completa (ATTENZIONE: non ideale in scenari high-concurrency)
-//            log.info("Restaurant {} validation successful", slotId);
-//            return true;
-//        } catch (WebClientResponseException e) {
-//            log.warn("Restaurant validation failed for {}: Status Code {}", salonId, e.getStatusCode(), e);
-//            // Potremmo differenziare 404 da altri errori (5xx)
-//            return false;
-//        } catch (Exception e) {
-//            log.error("Error calling restaurant service for restaurant {}", slotId, e);
-//            return false; // Considera qualsiasicccccc       fd eccezione come fallimento
-//        }
-        return true;
+        try {
+            salonWebClient.get()
+                    .uri("/api/timeslots/{id}", slotId)
+                    .retrieve() // Ottiene la risposta
+                    .toBodilessEntity() // Non ci interessa il body, solo lo status code
+                    .block(); // Blocca finché la chiamata non è completa (ATTENZIONE: non ideale in scenari high-concurrency)
+            log.info("Slot {} validation successful", slotId);
+            return true;
+        } catch (WebClientResponseException e) {
+            log.warn("Slot validation failed for {}: Status Code {}", slotId, e.getStatusCode(), e);
+            return false;
+        } catch (Exception e) {
+            log.error("Error calling Salon service for Slot {}", slotId, e);
+            return false;
+        }
     }
 
     private boolean validateClient(Long clientId) {
         log.info("Calling Client Service to validate client {}", clientId);
-//        try {
-//            restaurantWebClient.get()
-//                    .uri("/restaurants/{id}/validate", clientId)
-//                    .retrieve() // Ottiene la risposta
-//                    .toBodilessEntity() // Non ci interessa il body, solo lo status code
-//                    .block(); // Blocca finché la chiamata non è completa (ATTENZIONE: non ideale in scenari high-concurrency)
-//            log.info("Restaurant {} validation successful", clientId);
-//            return true;
-//        } catch (WebClientResponseException e) {
-//            log.warn("Restaurant validation failed for {}: Status Code {}", clientId, e.getStatusCode(), e);
-//            // Potremmo differenziare 404 da altri errori (5xx)
-//            return false;
-//        } catch (Exception e) {
-//            log.error("Error calling restaurant service for restaurant {}", clientId, e);
-//            return false; // Considera qualsiasicccccc       fd eccezione come fallimento
-//        }
-        return true;
+        try {
+            clientWebClient.get()
+                    .uri("/api/clients/getClient/{id}", clientId)
+                    .retrieve() // Ottiene la risposta
+                    .toBodilessEntity() // Non ci interessa il body, solo lo status code
+                    .block(); // Blocca finché la chiamata non è completa (ATTENZIONE: non ideale in scenari high-concurrency)
+            log.info("Client {} validation successful", clientId);
+            return true;
+        } catch (WebClientResponseException e) {
+            log.warn("Client validation failed for {}: Status Code {}", clientId, e.getStatusCode(), e);
+            return false;
+        } catch (Exception e) {
+            log.error("Error calling Client service for client {}", clientId, e);
+            return false;
+        }
     }
     private boolean validateEmployee(Long employeeId) {
         log.info("Calling Employee Service to validate employee {}", employeeId);
-//        try {
-//            restaurantWebClient.get()
-//                    .uri("/restaurants/{id}/validate", clientId)
-//                    .retrieve() // Ottiene la risposta
-//                    .toBodilessEntity() // Non ci interessa il body, solo lo status code
-//                    .block(); // Blocca finché la chiamata non è completa (ATTENZIONE: non ideale in scenari high-concurrency)
-//            log.info("Restaurant {} validation successful", clientId);
-//            return true;
-//        } catch (WebClientResponseException e) {
-//            log.warn("Restaurant validation failed for {}: Status Code {}", employeeId, e.getStatusCode(), e);
-//            // Potremmo differenziare 404 da altri errori (5xx)
-//            return false;
-//        } catch (Exception e) {
-//            log.error("Error calling restaurant service for restaurant {}", employeeId, e);
-//            return false; // Considera qualsiasicccccc       fd eccezione come fallimento
-//        }
         return true;
     }
 
     private boolean validateService(Long serviceId) {
-        log.info("Calling Employee Service to validate employee {}", serviceId);
-//        try {
-//            restaurantWebClient.get()
-//                    .uri("/restaurants/{id}/validate", serviceId)
-//                    .retrieve() // Ottiene la risposta
-//                    .toBodilessEntity() // Non ci interessa il body, solo lo status code
-//                    .block(); // Blocca finché la chiamata non è completa (ATTENZIONE: non ideale in scenari high-concurrency)
-//            log.info("Restaurant {} validation successful", serviceId);
-//            return true;
-//        } catch (WebClientResponseException e) {
-//            log.warn("Restaurant validation failed for {}: Status Code {}", serviceId, e.getStatusCode(), e);
-//            // Potremmo differenziare 404 da altri errori (5xx)
-//            return false;
-//        } catch (Exception e) {
-//            log.error("Error calling restaurant service for restaurant {}", serviceId, e);
-//            return false; // Considera qualsiasicccccc       fd eccezione come fallimento
-//        }
-        return true;
+        log.info("Calling Salon Service to validate service {}", serviceId);
+        try {
+            salonWebClient.get()
+                    .uri("/api/services/{id}", serviceId)
+                    .retrieve() // Ottiene la risposta
+                    .toBodilessEntity() // Non ci interessa il body, solo lo status code
+                    .block(); // Blocca finché la chiamata non è completa (ATTENZIONE: non ideale in scenari high-concurrency)
+            log.info("Service {} validation successful", serviceId);
+            return true;
+        } catch (WebClientResponseException e) {
+            log.warn("Service validation failed for {}: Status Code {}", serviceId, e.getStatusCode(), e);
+            return false;
+        } catch (Exception e) {
+            log.error("Error calling Service service for service {}", serviceId, e);
+            return false;
+        }
     }
 
 

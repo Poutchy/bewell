@@ -31,5 +31,11 @@ app:
     routingkey:
       booking-created: ${APP_RABBITMQ_ROUTINGKEY_BOOKING_CREATED:rk.booking.booking-created}
 
+services:
+  salon:
+    url: ${SERVICES_SALON_URL:http://salon-service:8080}
+  client:
+    url: ${SERVICES_CLIENT_URL:http://client-service:8080}
+
 server:
   port: 8086
