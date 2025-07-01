@@ -1,15 +1,20 @@
-import React from "react"
+import React from "react";
 
 export function SalonList(props) {
     return (
         <div
-            className={`p-4 border-b cursor-pointer hover:bg-gray-50 ${
-                props.isSelected ? "bg-blue-50" : ""
-            }`}
-            onClick={() => props.onSelect(props.job)}
+            className={`salon-list-item ${props.isSelected ? "selected" : ""}`}
+            onClick={() => props.onSelect(props.salon)}
         >
-            <h3 className="text-lg font-semibold">{props.salon.name}</h3>
-            <p className="text-sm text-gray-600">{props.salon.address} - {props.salon.email}</p>
+            <div>
+                <img src={props.salon.imageUrls[0]}/>
+            </div>
+            <div>
+                <h3 className="salon-list-title">{props.salon.name}</h3>
+                <p className="salon-list-subtitle">
+                    {props.salon.address} - {props.salon.email}
+                </p>
+            </div>
         </div>
     );
 }

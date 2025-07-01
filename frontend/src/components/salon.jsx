@@ -2,9 +2,9 @@ import { SalonList, SelectedSalon } from "./";
 import React, { useEffect, useState } from "react";
 import { TakeAllSalons } from "../services";
 
-export function Salon() {
+export function Salons() {
     const [salonsList, setSalonsList] = useState([]);
-    const [selectedSalon, setSelectedSalon] = useState(null);
+    const [selectedIndex, setSelectedIndex] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -26,25 +26,27 @@ export function Salon() {
         return <div style={{  }}>Loading...</div>;
     }
 
+    const selectedSalon = selectedIndex !== null ? salonsList[selectedIndex] : null;
+
     return (
-        <div class="flex-container">
-            <div class="flex-child">
-                {salonsList.map((salon) => (
+        <div className="flex-container">
+            <div className="flex-child">
+                {salonsList.map((salon, index) => (
                     <SalonList
-                        key={salon.id}
+                        key={index}
                         salon={salon}
-                        isSelected={selectedSalon?.id === salon.id}
-                        onSelect={() => setSelectedSalon(salon)}
+                        isSelected={selectedIndex === index}
+                        onSelect={() => setSelectedIndex(index)}
                     />
                 ))}
             </div>
-            <div class="flex-child">
+            <div className="flex-child">
                 {
-                    selectedSalon == null &&
+                    selectedIndex == null &&
                     <p>You don't have selected an item</p>
                 }
                 {
-                    selectedSalon != null &&
+                    selectedIndex != null &&
                     <SelectedSalon salon={selectedSalon}/>
                 }
             </div>

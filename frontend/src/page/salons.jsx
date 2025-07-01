@@ -1,12 +1,12 @@
 import "../css/salons.css"
 import React from "react";
-import {Salon} from "../components";
+import {Salons} from "../components";
 
-export function Salons(){
+export function SalonsVisualisation(){
     return (
         <div>
             <p>Salons Visualisation</p>
-            <Salon/>
+            <Salons/>
         </div>
     )
 }

@@ -24,3 +24,31 @@
 .flex-child:first-child {
     margin-right: 20px;
 }
+
+.salon-list-item {
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb; /* light gray */
+    cursor: pointer;
+    background-color: white;
+    transition: background-color 0.2s ease;
+}
+
+.salon-list-item:hover {
+    background-color: #f9fafb; /* light hover */
+}
+
+.salon-list-item.selected {
+    background-color: #dbeafe; /* light blue for selected */
+}
+
+.salon-list-title {
+    font-size: 1.125rem; /* ~text-lg */
+    font-weight: 600; /* semibold */
+    margin: 0 0 4px 0;
+}
+
+.salon-list-subtitle {
+    font-size: 0.875rem; /* ~text-sm */
+    color: #4b5563; /* gray-600 */
+    margin: 0;
+}
