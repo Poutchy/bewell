@@ -1,5 +1,4 @@
 export * from "./home_page"
-export * from "./salon";
 export * from "./salons";
 export * from "./review";
 export * from "./reviews";

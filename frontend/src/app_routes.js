@@ -1,5 +1,5 @@
 import {Route, Routes} from "react-router-dom";
-import {HomePage, CreateReservation, NotFound, Reservation, Salon, Salons, Reviews, Review, Authentication} from "./page";
+import {HomePage, CreateReservation, NotFound, Reservation, Salons, Reviews, Review, Authentication} from "./page";
 import {ProtectedRoutes} from "./components";
 import {useIsConnected} from "./interface";
 
@@ -10,7 +10,6 @@ export function AppRoutes() {
         <Routes>
             <Route path="/" element={<HomePage/>}/>
             <Route path="/salons" element={<Salons/>}/>
-            <Route path="/salon/:id" element={<Salon/>}/>
             <Route path="/reviews" element={<Reviews/>} />
             <Route path="/review/:id" element={<Review/>} />
             <Route element={ <ProtectedRoutes isAllowed={isConnected()} to={"/authentication"} /> }>

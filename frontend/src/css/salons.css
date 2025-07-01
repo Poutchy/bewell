@@ -1,0 +1,26 @@
+.flex-container {
+    display: flex;
+    height: 100vh;
+    background-color: #f3f4f6;
+}
+
+.flex-child {
+    width: 50%;
+    overflow-y: auto;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.flex-child.left {
+    border-left: 1px solid #e5e7eb;
+    background-color: black;
+}
+
+.flex-child.right {
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.flex-child:first-child {
+    margin-right: 20px;
+}
