@@ -1,16 +1,40 @@
 services:
 
+  # API Gateway
+  api-gateway:
+    build: ./backend/api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - review-service
+      - user-service
+      - booking-service
+      - salon-service
+      - auth-service
+
+
   # MySQL Database
   mysql:
     image: mysql:8
-    container_name: mysql
     environment:
       - MYSQL_ROOT_PASSWORD=root
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - ./docker/mysql:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
+
+  # Auth Service
+  auth-service:
+    build: ./backend/auth-service
+    depends_on:
+      - mysql
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/auth_service
+      SPRING_DATASOURCE_USERNAME: ${APP_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${APP_DB_PASSWORD}
 
   # RabbitMQ
   rabbitmq:
@@ -28,7 +52,6 @@ services:
   # User Service
   user-service:
     build: ./backend/user-service
-    container_name: bewell-user-service
     depends_on:
       - mysql
     ports:
@@ -45,7 +68,7 @@ services:
       - mysql
       - rabbitmq
     ports:
-      - "8086:8086"
+      - "8082:8082"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/booking_service
       SPRING_DATASOURCE_USERNAME: ${APP_DB_USER}
@@ -58,22 +81,21 @@ services:
       APP_RABBITMQ_QUEUE_BOOKING_CREATED: bewell-queue
       APP_RABBITMQ_ROUTINGKEY_BOOKING_CREATED: rk.booking.booking-created
 
-  # Payment Service
-  payment-service:
-    build: ./backend/payment-service
-    depends_on:
-      - mysql
-    ports:
-      - "8087:8087"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/payment_service
-      SPRING_DATASOURCE_USERNAME: ${APP_DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${APP_DB_PASSWORD}
+#  # Payment Service
+#  payment-service:
+#    build: ./backend/payment-service
+#    depends_on:
+#      - mysql
+#    ports:
+#      - "8087:8087"
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/payment_service
+#      SPRING_DATASOURCE_USERNAME: ${APP_DB_USER}
+#      SPRING_DATASOURCE_PASSWORD: ${APP_DB_PASSWORD}
 
   # Review Service
   review-service:
     build: ./backend/review-service
-    container_name: bewell-review-service
     environment:
       - SPRING_DATA_MONGODB_URI
     ports:
@@ -82,7 +104,6 @@ services:
   # Salon Service
   salon-service:
     build: ./backend/salon-service
-    container_name: bewell-salon-service
     environment:
       - SPRING_NEO4J_URI
       - SPRING_NEO4J_AUTHENTICATION_USERNAME
@@ -91,17 +112,17 @@ services:
     ports:
       - "8085:8085"
 
-  # Notification Service
-  notification-service:
-    build: ./backend/notification-service
-    ports:
-      - "8086:8080"
-
-  # Frontend
-  frontend:
-    build: ./frontend/react-app
-    ports:
-      - "3000:80"
+#  # Notification Service
+#  notification-service:
+#    build: ./backend/notification-service
+#    ports:
+#      - "8086:8080"
+#
+#  # Frontend
+#  frontend:
+#    build: ./frontend/react-app
+#    ports:
+#      - "3000:80"
 
 volumes:
   mysql_data:

@@ -5,8 +5,7 @@ FROM openjdk:25-jdk-slim
 WORKDIR /app
 
 # Copy the built jar file into the container (you can change the name)
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+COPY target/booking-service-0.0.1-SNAPSHOT.jar /app/app.jar
 
 # Run the jar file
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "/app/app.jar"]
