@@ -1,43 +1,45 @@
+server:
+  port: 8080
+
 spring:
+  application:
+    name: api-gateway
   cloud:
     gateway:
       server:
-        routes:
-          - id: user-service
-            uri: http://user-service:8088
-            predicates:
-              - Path=/api/client/**
-          - id: booking-service
-            uri: http://booking-service:8082
-            predicates:
-              - Path=/api/bookings/**
-          - id: payment-service
-            uri: http://payment-service:8087
-            predicates:
-              - Path=/api/payments/**
-          - id: review-service
-            uri: http://review-service:8084
-            predicates:
-              - Path=/api/reviews/**
-          - id: salon-service
-            uri: http://salon-service:8085
-            predicates:
-              - Path=/api/salons/**
-          - id: notification-service
-            uri: http://notification-service:8083
-            predicates:
-              - Path=/api/notifications/**
-          - id: auth-service
-            uri: http://auth-service:8081
-            predicates:
-              - Path=/api/auth/**
-
-  application:
-    name: api-gateway
+        webflux:
+          routes:
+            - id: user-service
+              uri: http://user-service:8088
+              predicates:
+                - Path=/api/client/**
+            - id: booking-service
+              uri: http://booking-service:8082
+              predicates:
+                - Path=/api/bookings/**
+            - id: payment-service
+              uri: http://payment-service:8087
+              predicates:
+                - Path=/api/payments/**
+            - id: review-service
+              uri: http://review-service:8084
+              predicates:
+                - Path=/api/reviews/**
+            - id: salon-service
+              uri: http://salon-service:8085
+              predicates:
+                - Path=/api/salons/**
+            - id: notification-service
+              uri: http://notification-service:8083
+              predicates:
+                - Path=/api/notifications/**
+            - id: auth-service
+              uri: http://auth-service:8081
+              predicates:
+                - Path=/api/auth/**
 
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
-
-server:
-  port: 8080
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
