@@ -6,6 +6,4 @@ export * from "./reviews";
 export * from "./reservation";
 export * from "./not_found";
 export * from "./create_reservation";
-export * from "./registration";
 export * from "./authentication";
-export * from "./connection";
