@@ -6,6 +6,7 @@ import com.taass.user_service.model.Client;
 import com.taass.user_service.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping("/api/client")
+@RequestMapping("/api/clients")
 @RequiredArgsConstructor
 public class ClientController {
 
@@ -28,9 +29,9 @@ public class ClientController {
      * @param clientRequest the Client to add
      */
     @PostMapping("/addClient")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void addClient(@RequestBody ClientRequest clientRequest) {
-        clientService.addClient(clientRequest);
+    public ResponseEntity<ClientDTO> addClient(@RequestBody ClientRequest clientRequest) {
+        ClientDTO client = clientService.addClient(clientRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(client);
     }
 
     /**
@@ -40,8 +41,9 @@ public class ClientController {
      * @return the Client corresponding to the email
      */
     @GetMapping("/{email}")
-    public ClientDTO getClient(@PathVariable String email) {
-        return clientService.getClientByEmail(email);
+    public ResponseEntity<ClientDTO> getClient(@PathVariable String email) {
+        ClientDTO client =  clientService.getClientByEmail(email);
+        return ResponseEntity.ok(client);
     }
 
     /**
@@ -61,9 +63,9 @@ public class ClientController {
      * @return All the Client
      */
     @GetMapping("/getAllClients")
-    @ResponseStatus(HttpStatus.OK)
-    public List<ClientDTO> getAllClient() {
-        return clientService.getAllClients();
+    public ResponseEntity<List<ClientDTO>> getAllClient() {
+        List<ClientDTO> clients =  clientService.getAllClients();
+        return  ResponseEntity.ok(clients);
     }
 
 
@@ -73,11 +75,13 @@ public class ClientController {
      * @param email the email of the Client to delete
      */
     @DeleteMapping("/delete/{email}")
+    @ResponseStatus(HttpStatus.OK)
     public void deleteClient(@PathVariable String email) {
         clientService.deleteClientWithEmail(email);
     }
 
     @DeleteMapping("/delete/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public void deleteClient(@PathVariable Integer id) {
         clientService.deleteClientWithId(id);
     }
@@ -89,8 +93,9 @@ public class ClientController {
      * @return the updated Client
      */
     @PutMapping("/update")
-    public ClientDTO updateClient(@RequestBody Client client) {
-        return clientService.update(client);
+    public ResponseEntity<ClientDTO> updateClient(@RequestBody Client client) {
+        ClientDTO updatedClient = clientService.update(client);
+        return  ResponseEntity.ok(updatedClient);
     }
 
 }

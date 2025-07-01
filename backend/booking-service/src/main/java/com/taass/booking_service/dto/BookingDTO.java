@@ -1,5 +1,6 @@
 package com.taass.booking_service.dto;
 
+import com.taass.booking_service.model.BookingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,4 +20,5 @@ public class BookingDTO {
     private Long employeeId;
     private Long serviceId;
     private Boolean payed;
+    private BookingStatus status; // e.g., "confirmed", "cancelled", "completed"
 }

@@ -1,13 +1,20 @@
 package com.taass.booking_service.service;
 
-import com.taass.booking_service.BookingNotFoundException;
+import com.taass.BookingMessageDTO;
+import com.taass.booking_service.exceptions.BookingNotFoundException;
 import com.taass.booking_service.dto.BookingDTO;
 import com.taass.booking_service.dto.BookingRequest;
 import com.taass.booking_service.model.Booking;
+import com.taass.booking_service.model.BookingStatus;
 import com.taass.booking_service.repository.BookingRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +24,21 @@ import java.util.List;
 @Slf4j
 public class BookingService {
     private final BookingRepository bookingRepository;
+    private final RabbitTemplate rabbitTemplate;
+    private final WebClient clientWebClient;
+    private final WebClient salonWebClient;
+    private BookingStatus bookingStatus;
 
-    public void addBooking(BookingRequest bookingRequest) {
+    @Value("${app.rabbitmq.exchange}")
+    private String exchangeName;
+
+    @Value("${app.rabbitmq.routingkey.booking-created}")
+    private String bookingCreatedRoutingKey;
+
+    @Transactional
+    public BookingDTO addBooking(BookingRequest bookingRequest) {
+        log.info("Adding booking for request {}", bookingRequest);
+
         Booking booking = Booking.builder()
                 .salonId(bookingRequest.getSalonId())
                 .tStart(bookingRequest.getStart())
@@ -29,8 +49,51 @@ public class BookingService {
                 .serviceId(bookingRequest.getServiceId())
                 .payed(bookingRequest.getPayed())
                 .build();
-        bookingRepository.save(booking);
+
+        booking.setStatus(BookingStatus.PENDING_VALIDATION); // Default status
+
+        Booking savedBooking =  bookingRepository.save(booking);
+
+        bookingStatus = BookingStatus.PENDING_VALIDATION; // Default status
+        boolean isBookingValid = validateBookingRequest(bookingRequest);
+
+        if(isBookingValid){
+            try{
+                BookingMessageDTO bookingMessageDTO = new BookingMessageDTO(
+                        savedBooking.getSalonId(),
+                        savedBooking.getTStart(),
+                        savedBooking.getTEnd(),
+                        savedBooking.getSlotId(),
+                        savedBooking.getClientId(),
+                        savedBooking.getEmployeeId(),
+                        savedBooking.getServiceId(),
+                       savedBooking.getPayed()
+                );
+
+                log.info("Booking {} approved. Publishing BookingMessageDTO to exchange '{}' with key '{}'",
+                        savedBooking.getId(), exchangeName, bookingCreatedRoutingKey);
+
+                rabbitTemplate.setMandatory(true);
+
+                rabbitTemplate.setReturnsCallback(ret -> log.error("UNROUTED message {}", ret));
+
+                rabbitTemplate.setConfirmCallback((cd,ack,c) ->
+                        log.info("Broker ack? {}  cause: {}", ack, c));
+
+                rabbitTemplate.convertAndSend(exchangeName, bookingCreatedRoutingKey, bookingMessageDTO);
+
+            } catch (Exception e) {
+                log.error("Error while saving booking for request {}", bookingRequest);
+                bookingStatus = BookingStatus.FAILED;
+            }
+        }
+
+        savedBooking.setStatus(bookingStatus);
+
         log.info("Booking added: {}", booking.getId());
+        Booking finalBooking = bookingRepository.save(savedBooking);
+
+        return mapToBookingDTO(finalBooking);
     }
 
     public BookingDTO getBookingById(Long id) {
@@ -104,6 +167,7 @@ public class BookingService {
         existingBooking.setEmployeeId(bookingDTO.getEmployeeId());
         existingBooking.setServiceId(bookingDTO.getServiceId());
         existingBooking.setPayed(bookingDTO.getPayed() != null ? bookingDTO.getPayed() : false); // Default to false if not provided
+        existingBooking.setStatus(bookingDTO.getStatus());
 
         log.info("Booking updated: {}", existingBooking.getId());
         return mapToBookingDTO(bookingRepository.save(existingBooking));
@@ -127,6 +191,158 @@ public class BookingService {
         }
     }
 
+    private boolean validateBookingRequest(BookingRequest bookingRequest) {
+        if (bookingRequest.getSalonId() == null || bookingRequest.getClientId() == null || bookingRequest.getEmployeeId() == null) {
+            log.error("Invalid booking request: Missing required fields.");
+            bookingStatus = BookingStatus.INVALID;
+
+            return false;
+        }
+        if (bookingRequest.getStart() == null || bookingRequest.getEnd() == null) {
+            log.error("Invalid booking request: Start and end times are required.");
+            bookingStatus = BookingStatus.INVALID;
+
+            return false;
+        }
+        if (bookingRequest.getServiceId() == null) {
+            log.error("Invalid booking request: Service ID is required.");
+            bookingStatus = BookingStatus.INVALID;
+
+            return false;
+        }
+        if (bookingRequest.getSlotId() == null) {
+            log.error("Invalid booking request: Slot ID is required.");
+            bookingStatus = BookingStatus.INVALID;
+
+            return false;
+        }
+        if (bookingRequest.getPayed() == null) {
+            bookingRequest.setPayed(false); // Default to false if not provided
+        }
+
+        if(!validateSalon(bookingRequest.getSalonId())) {
+            log.error("Invalid booking request: Salon validation failed for salon ID {}", bookingRequest.getSalonId());
+            bookingStatus = BookingStatus.REJECTED_SALON;
+
+            return false;
+        }
+
+        if(!validateClient(bookingRequest.getClientId())) {
+            log.error("Invalid booking request: Client validation failed for client ID {}", bookingRequest.getClientId());
+            bookingStatus = BookingStatus.REJECTED_CLIENT;
+
+            return false;
+        }
+
+        if(!validateEmployee(bookingRequest.getEmployeeId())) {
+            log.error("Invalid booking request: Employee validation failed for employee ID {}", bookingRequest.getEmployeeId());
+            bookingStatus = BookingStatus.REJECTED_EMPLOYEE;
+
+            return false;
+        }
+
+        if(!validateService(bookingRequest.getServiceId())) {
+            log.error("Invalid booking request: Service validation failed for service ID {}", bookingRequest.getServiceId());
+            bookingStatus = BookingStatus.REJECTED_SERVICE;
+
+            return false;
+        }
+
+        if(!validateSlot(bookingRequest.getSlotId())) {
+            log.error("Invalid booking request: Slot validation failed for slot ID {}", bookingRequest.getSlotId());
+            bookingStatus = BookingStatus.REJECTED_SLOT;
+
+            return false;
+        }
+
+        log.info("Booking request validation successful for salon ID {}, client ID {}, employee ID {}, service ID {}, slot ID {}",
+                bookingRequest.getSalonId(), bookingRequest.getClientId(), bookingRequest.getEmployeeId(), bookingRequest.getServiceId(), bookingRequest.getSlotId());
+        bookingStatus = BookingStatus.CONFIRMED; // Set to pending if all validations pass
+
+        return true;
+    }
+
+    private boolean validateSalon(Long salonId) {
+        log.info("Calling Salon Service to validate salon {}", salonId);
+        try {
+            salonWebClient.get()
+                    .uri("/api/salons/{id}", salonId)
+                    .retrieve() // Ottiene la risposta
+                    .toBodilessEntity() // Non ci interessa il body, solo lo status code
+                    .block(); // Blocca finché la chiamata non è completa (ATTENZIONE: non ideale in scenari high-concurrency)
+            log.info("Salon {} validation successful", salonId);
+            return true;
+        } catch (WebClientResponseException e) {
+            log.warn("Salon validation failed for {}: Status Code {}", salonId, e.getStatusCode(), e);
+            return false;
+        } catch (Exception e) {
+            log.error("Error calling Salon service for Salon {}", salonId, e);
+            return false;
+        }
+    }
+
+    private boolean validateSlot(Long slotId) {
+        log.info("Calling Salon Service to validate slot {}", slotId);
+        try {
+            salonWebClient.get()
+                    .uri("/api/timeslots/{id}", slotId)
+                    .retrieve() // Ottiene la risposta
+                    .toBodilessEntity() // Non ci interessa il body, solo lo status code
+                    .block(); // Blocca finché la chiamata non è completa (ATTENZIONE: non ideale in scenari high-concurrency)
+            log.info("Slot {} validation successful", slotId);
+            return true;
+        } catch (WebClientResponseException e) {
+            log.warn("Slot validation failed for {}: Status Code {}", slotId, e.getStatusCode(), e);
+            return false;
+        } catch (Exception e) {
+            log.error("Error calling Salon service for Slot {}", slotId, e);
+            return false;
+        }
+    }
+
+    private boolean validateClient(Long clientId) {
+        log.info("Calling Client Service to validate client {}", clientId);
+        try {
+            clientWebClient.get()
+                    .uri("/api/clients/getClient/{id}", clientId)
+                    .retrieve() // Ottiene la risposta
+                    .toBodilessEntity() // Non ci interessa il body, solo lo status code
+                    .block(); // Blocca finché la chiamata non è completa (ATTENZIONE: non ideale in scenari high-concurrency)
+            log.info("Client {} validation successful", clientId);
+            return true;
+        } catch (WebClientResponseException e) {
+            log.warn("Client validation failed for {}: Status Code {}", clientId, e.getStatusCode(), e);
+            return false;
+        } catch (Exception e) {
+            log.error("Error calling Client service for client {}", clientId, e);
+            return false;
+        }
+    }
+    private boolean validateEmployee(Long employeeId) {
+        log.info("Calling Employee Service to validate employee {}", employeeId);
+        return true;
+    }
+
+    private boolean validateService(Long serviceId) {
+        log.info("Calling Salon Service to validate service {}", serviceId);
+        try {
+            salonWebClient.get()
+                    .uri("/api/services/{id}", serviceId)
+                    .retrieve() // Ottiene la risposta
+                    .toBodilessEntity() // Non ci interessa il body, solo lo status code
+                    .block(); // Blocca finché la chiamata non è completa (ATTENZIONE: non ideale in scenari high-concurrency)
+            log.info("Service {} validation successful", serviceId);
+            return true;
+        } catch (WebClientResponseException e) {
+            log.warn("Service validation failed for {}: Status Code {}", serviceId, e.getStatusCode(), e);
+            return false;
+        } catch (Exception e) {
+            log.error("Error calling Service service for service {}", serviceId, e);
+            return false;
+        }
+    }
+
+
     private BookingDTO mapToBookingDTO(Booking booking) {
         return BookingDTO.builder()
                 .id(booking.getId())
@@ -138,6 +354,7 @@ public class BookingService {
                 .employeeId(booking.getEmployeeId())
                 .serviceId(booking.getServiceId())
                 .payed(booking.getPayed())
+                .status(booking.getStatus())
                 .build();
     }
 }

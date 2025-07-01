@@ -6,6 +6,7 @@ import com.taass.booking_service.dto.BookingRequest;
 import com.taass.booking_service.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,39 +18,39 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping("/addBooking")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void addBooking(@RequestBody BookingRequest bookingRequest) {
-        bookingService.addBooking(bookingRequest);
+    public ResponseEntity<BookingDTO> addBooking(@RequestBody BookingRequest bookingRequest) {
+        BookingDTO createdBooking = bookingService.addBooking(bookingRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdBooking);
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public BookingDTO getBookingById(@PathVariable Long id) {
-        return bookingService.getBookingById(id);
+    public ResponseEntity<BookingDTO> getBookingById(@PathVariable Long id) {
+        BookingDTO booking = bookingService.getBookingById(id);
+        return ResponseEntity.ok(booking);
     }
 
     @GetMapping("/client/{clientId}")
-    @ResponseStatus(HttpStatus.OK)
-    public List<BookingDTO> getBookingByClientId(@PathVariable Long clientId) {
-        return bookingService.getBookingByClientId(clientId);
+    public ResponseEntity<List<BookingDTO>> getBookingByClientId(@PathVariable Long clientId) {
+        List<BookingDTO> booking = bookingService.getBookingByClientId(clientId);
+        return ResponseEntity.ok(booking);
     }
 
     @GetMapping("/salon/{salonId}")
-    @ResponseStatus(HttpStatus.OK)
-    public List<BookingDTO> getBookingBySalonId(@PathVariable Long salonId) {
-        return bookingService.getBookingBySalonId(salonId);
+    public ResponseEntity<List<BookingDTO>> getBookingBySalonId(@PathVariable Long salonId) {
+        List<BookingDTO> booking = bookingService.getBookingBySalonId(salonId);
+        return ResponseEntity.ok(booking);
     }
 
     @GetMapping("/service/{serviceId}")
-    @ResponseStatus(HttpStatus.OK)
-    public List<BookingDTO> getBookingByServiceId(@PathVariable Long serviceId) {
-        return bookingService.getBookingByServiceId(serviceId);
+    public ResponseEntity<List<BookingDTO>> getBookingByServiceId(@PathVariable Long serviceId) {
+        List<BookingDTO> booking = bookingService.getBookingByServiceId(serviceId);
+        return ResponseEntity.ok(booking);
     }
 
     @GetMapping("/employee/{employeeId}")
-    @ResponseStatus(HttpStatus.OK)
-    public List<BookingDTO> getBookingByEmployeeId(@PathVariable Long employeeId) {
-        return bookingService.getBookingByEmployeeId(employeeId);
+    public ResponseEntity<List<BookingDTO>> getBookingByEmployeeId(@PathVariable Long employeeId) {
+        List<BookingDTO> booking = bookingService.getBookingByEmployeeId(employeeId);
+        return ResponseEntity.ok(booking);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -59,8 +60,8 @@ public class BookingController {
     }
 
     @PutMapping("/update")
-    @ResponseStatus(HttpStatus.OK)
-    public BookingDTO updateBooking(@RequestBody BookingDTO bookingDTO) {
-        return bookingService.updateBooking(bookingDTO);
+    public ResponseEntity<BookingDTO> updateBooking(@RequestBody BookingDTO bookingDTO) {
+        BookingDTO updatedBooking = bookingService.updateBooking(bookingDTO);
+        return ResponseEntity.ok(updatedBooking);
     }
 }

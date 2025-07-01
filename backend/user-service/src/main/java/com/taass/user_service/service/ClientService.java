@@ -26,7 +26,7 @@ public class ClientService {
      *
      * @param clientRequest the Client to add
      */
-    public void addClient(ClientRequest clientRequest) {
+    public ClientDTO addClient(ClientRequest clientRequest) {
         Client client = Client.builder()
                 .name(clientRequest.getName())
                 .surname(clientRequest.getSurname())
@@ -41,6 +41,8 @@ public class ClientService {
                 .build();
         clientRepository.save(client);
         log.info("Client added: {}", client.getId());
+
+        return mapToClientDTO(client);
     }
 
     /**

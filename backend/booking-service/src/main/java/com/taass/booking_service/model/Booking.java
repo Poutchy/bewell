@@ -41,4 +41,8 @@ public class Booking {
 
     @Column(name = "payed")
     private Boolean payed;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private BookingStatus status; // e.g., "confirmed", "cancelled", "completed"
 }
