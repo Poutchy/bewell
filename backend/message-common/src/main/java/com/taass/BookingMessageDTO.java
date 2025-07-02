@@ -2,6 +2,7 @@ package com.taass;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serial;
@@ -9,6 +10,7 @@ import java.io.Serializable;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+@Getter
 public class BookingMessageDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

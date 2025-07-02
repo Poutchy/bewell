@@ -1,0 +1,34 @@
+server:
+  port: 8093
+
+spring:
+  application:
+    name: notification-service
+
+  # JavaMail
+  mail:
+    host: ${SPRING_EMAIL_HOST}
+    port: ${SPRING_EMAIL_PORT}
+    username: ${SPRING_EMAIL_USERNAME}
+    password: ${SPRING_EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  # RabbitMQ
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:rabbitmq}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME}
+    password: ${SPRING_RABBITMQ_PASSWORD}
+
+app:
+  rabbitmq:
+    exchange: ${APP_RABBITMQ_EXCHANGE:bewell.exchange}
+    queue:
+      booking-created-queue: ${APP_RABBITMQ_QUEUE_BOOKING_CREATED:booking.booking-created}
+    routingkey:
+      booking-created: ${APP_RABBITMQ_ROUTINGKEY_BOOKING_CREATED:rk.booking.booking-created}
