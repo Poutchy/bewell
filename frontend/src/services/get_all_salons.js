@@ -17,7 +17,23 @@ async function TakeAllSalons() {
         rating: 4.8,
         socialMediaLinks: "https://www.facebook.com/luxurysalon,https://www.instagram.com/luxurysalon",
         totalReviews: 150,
-        website: "https://www.luxurysalon.com"
+        website: "https://www.luxurysalon.com",
+        services: [
+            {
+                id: 1,
+                name: "Haircut Royale",
+                description: "A stylish haircut tailored to your preferences.",
+                price: 150,
+                duration: "PT30M",
+                discount: 10.0,
+                tags: [
+                    {
+                        id: 0
+                    }
+                ],
+                available: true
+            }
+        ],
     },{
         address: "123 Main Street, Cityville",
         description: "A high-end salon offering premium services.",
@@ -32,7 +48,23 @@ async function TakeAllSalons() {
         rating: 4.8,
         socialMediaLinks: "https://www.facebook.com/luxurysalon,https://www.instagram.com/luxurysalon",
         totalReviews: 150,
-        website: "https://www.luxurysalon.com"
+        website: "https://www.luxurysalon.com",
+        services: [
+            {
+                id: 1,
+                name: "Haircut Royale",
+                description: "A stylish haircut tailored to your preferences.",
+                price: 150,
+                duration: "PT30M",
+                discount: 10.0,
+                tags: [
+                    {
+                        id: 0
+                    }
+                ],
+                available: true
+            }
+        ],
     }]
 }
 

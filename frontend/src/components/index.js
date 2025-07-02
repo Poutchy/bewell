@@ -7,3 +7,4 @@ export * from "./salon";
 export * from "./selected_salon";
 export * from "./salon_list";
 export * from "./opening_hours";
+export * from "./service_list";

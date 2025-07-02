@@ -1,10 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import { HomeButton } from "../components";
 import "../css/auth.css";
 import {AppProvider, SignInPage} from "@toolpad/core";
 
 export function Authentication() {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const from = location.state?.from || "/";
+
     const providers = [
         { id: 'google', name: 'Google' },
         { id: 'credentials', name: 'Email and Password' }
@@ -19,7 +23,14 @@ export function Authentication() {
                 resolve({ error: 'This is a mock error message.' });
             }, 500);
         });
-        return promise;
+
+        const result = await promise;
+
+        if (!result.error) {
+            navigate(from, { replace: true }); // 👈 redirect back after login
+        }
+
+        return result;
     };
 
     return(<div className="main">
