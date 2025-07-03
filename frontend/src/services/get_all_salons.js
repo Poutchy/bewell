@@ -1,9 +1,10 @@
-import axios from "axios";
+// import axios from "axios";
 
 async function TakeAllSalons() {
-    const url = "http://" + process.env.BACKEND_APP_HOST + ":" + process.env.BACKEND_APP_PORTSERVER + "/api/salons";
-    //return axios.get(url).then((res) => res.data)
+    // const url = "http://" + process.env.BACKEND_APP_HOST + ":" + process.env.BACKEND_APP_PORTSERVER + "/api/salons";
+    // return axios.get(url).then((res) => res.data)
     return [{
+        id: 1,
         address: "123 Main Street, Cityville",
         description: "A high-end salon offering premium services.",
         email: "contact@luxurysalon.com",
@@ -35,6 +36,7 @@ async function TakeAllSalons() {
             }
         ],
     },{
+        id: 2,
         address: "123 Main Street, Cityville",
         description: "A high-end salon offering premium services.",
         email: "contact@luxurysalon.com",

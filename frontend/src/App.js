@@ -3,7 +3,8 @@ import './App.css';
 import {AppRoutes} from "./app_routes";
 import {ContextUser, initialState} from "./contexts/contextUser";
 import {Header} from "./components";
-
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 function App() {
     const [ userId, setUserId ] = useState(initialState.userId);
@@ -50,16 +51,18 @@ function App() {
     //     </ContextUser.Provider>
     // )
     return (
-        <ContextUser.Provider value={{ userId, setUserId, userToken, setUserToken }}>
-            <header>
-                <Header/>
-            </header>
-            <main>
-                <AppRoutes />
-            </main>
-            <footer style={{zIndex:300}}>
-            </footer>
-        </ContextUser.Provider>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <ContextUser.Provider value={{ userId, setUserId, userToken, setUserToken }}>
+                <header>
+                    <Header/>
+                </header>
+                <main>
+                    <AppRoutes />
+                </main>
+                <footer style={{zIndex:300}}>
+                </footer>
+            </ContextUser.Provider>
+      </LocalizationProvider>
     )
 }
 
