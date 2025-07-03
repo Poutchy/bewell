@@ -16,23 +16,53 @@ public class BookingCreatedMessageListener {
 
     private final JavaMailSender mailSender;
 
-    @RabbitListener(queues = "${rabbitmq.booking-created-queue}")
+    @RabbitListener(queues = "${app.rabbitmq.queue.booking-created-queue}")
     @Transactional
-    public Boolean handleBookingCreatedMessage(BookingMessageDTO bookingMessageDTO) {
-      log.info("Received Booking Created for order ID: {}", bookingMessageDTO.getSalonId());
+    public void handleBookingCreatedMessage(BookingMessageDTO bookingMessageDTO) {
+      log.info("Received Booking Created for order ID: {}", bookingMessageDTO.getOrderId());
 
       try {
           SimpleMailMessage message = new SimpleMailMessage();
 
+          String emailBody = String.format(
+                  """
+                          Dear Customer %s %s,
+                          
+                          Thank you for your booking at %s!
+                          
+                          Service: %s
+                          Booking Start At: %s
+                          Booking End At: %s
+                          Already payed: %s
+                          
+                          If you have any questions, please contact us
+                          at %s or call us at %s.
+                          
+                          You can find us at the following address:
+                            %s
+                          
+                          Best regards,
+                          The Team""",
+            bookingMessageDTO.getClientName(),
+            bookingMessageDTO.getClientSurname(),
+            bookingMessageDTO.getSalonName(),
+            bookingMessageDTO.getServiceName(),
+            bookingMessageDTO.getTStart(),
+            bookingMessageDTO.getTEnd(),
+            bookingMessageDTO.getPayed() ? "Yes" : "No",
+            bookingMessageDTO.getSalonEmail(),
+            bookingMessageDTO.getSalonPhone(),
+            bookingMessageDTO.getSalonAddress()
+          );
+
           message.setFrom("bewell.notification00@gmail.com");
-          message.setTo("matteobussolino7@gmail.com");
-          message.setSubject("Test email");
-          message.setText("This is a sample email body");
+          message.setTo(bookingMessageDTO.getClientEmail());
+          message.setSubject("Booking Confirmation - Order ID: " + bookingMessageDTO.getOrderId());
+          message.setText(emailBody);
 
           mailSender.send(message);
-          return true;
       } catch (Exception e) {
-          return false;
+            log.error("Failed to send booking confirmation email for order ID {}: {}", bookingMessageDTO.getOrderId(), e.getMessage(), e);
       }
     }
 
