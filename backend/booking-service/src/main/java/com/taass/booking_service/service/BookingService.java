@@ -1,5 +1,6 @@
 package com.taass.booking_service.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.taass.BookingMessageDTO;
 import com.taass.booking_service.exceptions.BookingNotFoundException;
 import com.taass.booking_service.dto.BookingDTO;
