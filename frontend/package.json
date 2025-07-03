@@ -14,10 +14,12 @@
     "@testing-library/user-event": "^13.5.0",
     "@toolpad/core": "^0.16.0",
     "axios": "^1.10.0",
+    "jwt-decode": "^4.0.0",
     "react": "^19.1.0",
     "react-app": "file:",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^6.9.0",
+    "react-router": "^7.6.3",
+    "react-router-dom": "^7.6.3",
     "react-scripts": "5.0.1",
     "react-select": "^5.10.1",
     "web-vitals": "^2.1.4"

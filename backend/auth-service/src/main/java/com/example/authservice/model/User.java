@@ -10,16 +10,18 @@ public class User {
     private Long id;
     @Column(nullable = false, unique = true)
     private String username;
-    @Column(nullable = false)
     private String password;
     @Column(nullable = false)
     private String role;
 
-    public User(Long id, String username, String password, String role) {
+    private boolean fromGoogle;
+
+    public User(Long id, String username, String password, String role, boolean fromGoogle) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
+        this.fromGoogle = fromGoogle;
     }
 
     public User() { }
@@ -36,16 +38,6 @@ public class User {
         return role;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
+    public boolean isFromGoogle() { return fromGoogle; }
 }
 
