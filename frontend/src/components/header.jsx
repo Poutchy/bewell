@@ -18,7 +18,7 @@ export function Header () {
         <Link to="/">
             <h1>BEWELL</h1>
         </Link>
-        <Link to="/reservation" style={{
+        <Link to="/authentication" style={{
             display: "flex",
             flexDirection: "row",
             justifyContent: "flex-end"

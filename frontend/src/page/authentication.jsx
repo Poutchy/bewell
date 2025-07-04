@@ -42,7 +42,7 @@ export function Authentication() {
 
     async function handleCallbackResponse(response) {
         try {
-            const res = await axios.post("http://localhost:8081/api/auth/google-signin", {
+            const res = await axios.post("http://localhost:8080/api/auth/google-signin", {
                 credential: response.credential,
             });
 
@@ -65,9 +65,9 @@ export function Authentication() {
         setLoading(true);
 
         try {
-            const res = await axios.post("http://localhost:8081/api/auth/signin", {
+            const res = await axios.post("http://localhost:8080/api/auth/signin", {
                 username: email,  // map email to username
-                password,
+                password: password,
             });
 
             const { token, role } = res.data;

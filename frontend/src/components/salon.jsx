@@ -5,14 +5,13 @@ import { TakeAllSalons } from "../services";
 export function Salons() {
     const [salonsList, setSalonsList] = useState([]);
     const [selectedIndex, setSelectedIndex] = useState(null);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function fetchSalon() {
             try {
                 const res = await TakeAllSalons();
+                console.log(res);
                 setSalonsList(res);
-                setLoading(false);
             } catch (e) {
                 console.error("poc", e);
             }
@@ -20,11 +19,6 @@ export function Salons() {
 
         fetchSalon();
     }, []);
-
-
-    if (loading) {
-        return <div style={{  }}>Loading...</div>;
-    }
 
     const selectedSalon = selectedIndex !== null ? salonsList[selectedIndex] : null;
 

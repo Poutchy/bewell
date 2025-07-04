@@ -14,10 +14,11 @@ export function BookingForm(props) {
     const salonId = props.salon.id;
     const serviceId = props.service.id;
     const duration = props.service.duration;
+    const slotList = props.salon.timeSlots;
 
     const [tStart, setTStart] = useState(null);
     const [tEnd, setTEnd] = useState(null);
-    const [slotId, setSlotId] = useState(1);
+    const [slotId, setSlotId] = useState(0);
     const [employeeId, setEmployeeId] = useState(0);
     const [employeeList, setEmployeeList] = useState([]);
     const [submitted, setSubmitted] = useState(false);
@@ -70,10 +71,12 @@ export function BookingForm(props) {
     };
 
     const showEmployeeError = submitted && employeeId === 0;
+    const showSlotError = submitted && slotId === 0;
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <form
+                className="booking-form"
                 onSubmit={handleSubmit}
                 style={{ display: "grid", gap: "1rem", width: 300 }}
             >
@@ -94,19 +97,28 @@ export function BookingForm(props) {
                 <TimePicker label="End Time" value={tEnd} readOnly disabled={!tEnd} />
 
                 <TextField
-                    label="Slot ID"
-                    type="number"
+                    label="Time Slots"
+                    select
                     value={slotId}
                     onChange={(e) => setSlotId(Number(e.target.value))}
-                />
+                    error={showEmployeeError}
+                    helperText={showSlotError ? "Please select a time slot." : ""}
+                >
+                    <MenuItem value={0}>-------</MenuItem>
+                    {slotList.map((time) => (
+                        <MenuItem key={time.id} value={time.id}>
+                            {time.startTime} - {time.endTime}
+                        </MenuItem>
+                    ))}
+                </TextField>
 
                 <TextField
                     select
                     label="Employee"
                     value={employeeId}
                     onChange={(e) => setEmployeeId(Number(e.target.value))}
-                    error={showEmployeeError}
-                    helperText={showEmployeeError ? "Please select an employee." : ""}
+                    error={showSlotError}
+                    helperText={showSlotError ? "Please select an employee." : ""}
                 >
                     <MenuItem value={0}>-------</MenuItem>
                     {employeeList.map((emp) => (
