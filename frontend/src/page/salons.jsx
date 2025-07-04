@@ -5,7 +5,6 @@ import {Salons} from "../components";
 export function SalonsVisualisation(){
     return (
         <div>
-            <p>Salons Visualisation</p>
             <Salons/>
         </div>
     )
