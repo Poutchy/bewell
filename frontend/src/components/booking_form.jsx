@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
     TextField,
     Button,
-    MenuItem,
+    MenuItem, Box, Typography, Modal,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -11,10 +11,12 @@ import { addMinutes, format as formatDate } from "date-fns";
 import { TakeAllEmployees } from "../services";
 
 export function BookingForm(props) {
-    const salonId = props.salon.id;
-    const serviceId = props.service.id;
-    const duration = props.service.duration;
-    const slotList = props.salon.timeSlots;
+    const salon = props.salon;
+    const service = props.service;
+    const salonId = salon.id;
+    const serviceId = service.id;
+    const duration = service.duration;
+    const slotList = salon.timeSlots;
 
     const [tStart, setTStart] = useState(null);
     const [tEnd, setTEnd] = useState(null);
@@ -22,6 +24,9 @@ export function BookingForm(props) {
     const [employeeId, setEmployeeId] = useState(0);
     const [employeeList, setEmployeeList] = useState([]);
     const [submitted, setSubmitted] = useState(false);
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
     const getDurationInMinutes = (iso = "PT0M") => {
         const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
@@ -68,6 +73,7 @@ export function BookingForm(props) {
             tEnd: tEnd ? formatDate(tEnd, "h:mm a") : null,
         };
         console.log("Submitted:", formData);
+        handleOpen();
     };
 
     const showEmployeeError = submitted && employeeId === 0;
@@ -82,13 +88,13 @@ export function BookingForm(props) {
             >
                 <TextField
                     label="Salon"
-                    value={props.salon?.name ?? ""}
+                    value={salon.name}
                     slotProps={{ input: { readOnly: true } }}
                 />
 
                 <TextField
                     label="Service"
-                    value={props.service?.name ?? ""}
+                    value={service.name}
                     slotProps={{ input: { readOnly: true } }}
                 />
 
@@ -105,8 +111,8 @@ export function BookingForm(props) {
                     helperText={showSlotError ? "Please select a time slot." : ""}
                 >
                     <MenuItem value={0}>-------</MenuItem>
-                    {slotList.map((time) => (
-                        <MenuItem key={time.id} value={time.id}>
+                    {slotList.map((time, index) => (
+                        <MenuItem key={index} value={time.id}>
                             {time.startTime} - {time.endTime}
                         </MenuItem>
                     ))}
@@ -132,6 +138,35 @@ export function BookingForm(props) {
                     Submit
                 </Button>
             </form>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box className="modal-box" sx={
+                    {
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 400,
+                        bgcolor: 'background.paper',
+                        border: '2px solid #000',
+                        boxShadow: 24,
+                        p: 4,
+                    }
+                }>
+                    <div>
+                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                            You choose {service.name} at {salon.name}
+                        </Typography>
+                    </div>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        From
+                    </Typography>
+                </Box>
+            </Modal>
         </LocalizationProvider>
     );
 }
