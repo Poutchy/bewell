@@ -1,5 +1,5 @@
 import {Route, Routes} from "react-router-dom";
-import {HomePage, CreateReservation, NotFound, SalonsVisualisation, Reviews, Review, Authentication} from "./page";
+import {HomePage, CreateReservation, ValidateReservation, NotFound, SalonsVisualisation, Reviews, Review, Authentication} from "./page";
 import {ProtectedRoutes} from "./components";
 import {useIsConnected} from "./interface";
 
@@ -15,6 +15,7 @@ export function AppRoutes() {
 
             <Route element={ <ProtectedRoutes isAllowed={isConnected()} to={"/authentication"} /> }>
                 <Route path="/reservation" element={<CreateReservation />} />
+                <Route path="/validate" element={<ValidateReservation/>} />
             </Route>
 
             <Route element={ <ProtectedRoutes isAllowed={!(isConnected())} to={"/reservation"} /> }>

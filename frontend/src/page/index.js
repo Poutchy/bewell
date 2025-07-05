@@ -5,3 +5,4 @@ export * from "./reviews";
 export * from "./not_found";
 export * from "./create_reservation";
 export * from "./authentication";
+export * from "./validate_reservation";
