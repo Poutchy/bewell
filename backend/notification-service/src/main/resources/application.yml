@@ -5,12 +5,15 @@ spring:
   application:
     name: notification-service
 
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
   # JavaMail
   mail:
-    host: ${SPRING_EMAIL_HOST}
-    port: ${SPRING_EMAIL_PORT}
-    username: ${SPRING_EMAIL_USERNAME}
-    password: ${SPRING_EMAIL_PASSWORD}
+    host: smtp.gmail.com
+    port: 587
+    username: bewell.notification00@gmail.com
+    password: ulilczcplrfzphwc
     properties:
       mail:
         smtp:
@@ -22,8 +25,8 @@ spring:
   rabbitmq:
     host: ${SPRING_RABBITMQ_HOST:rabbitmq}
     port: ${SPRING_RABBITMQ_PORT:5672}
-    username: ${SPRING_RABBITMQ_USERNAME}
-    password: ${SPRING_RABBITMQ_PASSWORD}
+    username: ${SPRING_RABBITMQ_USERNAME:user}
+    password: ${SPRING_RABBITMQ_PASSWORD:password}
 
 app:
   rabbitmq:
