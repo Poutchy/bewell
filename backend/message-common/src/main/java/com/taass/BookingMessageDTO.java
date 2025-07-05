@@ -66,11 +66,11 @@ public class BookingMessageDTO implements Serializable {
         return salonEmail;
     }
 
-    public String gettStart() {
+    public String getTStart() {
         return tStart;
     }
 
-    public String gettEnd() {
+    public String getTEnd() {
         return tEnd;
     }
 
