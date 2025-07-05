@@ -1,22 +1,18 @@
 package com.taass;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 public class BookingMessageDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     private Long orderId;
 
-    private String SalonName;
+    private String salonName;
     private  String salonAddress;
     private String salonPhone;
     private String salonEmail;
@@ -31,4 +27,70 @@ public class BookingMessageDTO implements Serializable {
     private String serviceName;
 
     private Boolean payed;
+
+    public BookingMessageDTO(Long orderId, String salonName, String salonAddress, String salonPhone, String salonEmail, String tStart, String tEnd, String clientName, String clientSurname, String clientEmail, String serviceName, Boolean payed) {
+        this.orderId = orderId;
+        this.salonName = salonName;
+        this.salonAddress = salonAddress;
+        this.salonPhone = salonPhone;
+        this.salonEmail = salonEmail;
+        this.tStart = tStart;
+        this.tEnd = tEnd;
+        this.clientName = clientName;
+        this.clientSurname = clientSurname;
+        this.clientEmail = clientEmail;
+        this.serviceName = serviceName;
+        this.payed = payed;
+    }
+
+    public BookingMessageDTO() {}
+
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public String getSalonName() {
+        return salonName;
+    }
+
+    public String getSalonAddress() {
+        return salonAddress;
+    }
+
+    public String getSalonPhone() {
+        return salonPhone;
+    }
+
+    public String getSalonEmail() {
+        return salonEmail;
+    }
+
+    public String gettStart() {
+        return tStart;
+    }
+
+    public String gettEnd() {
+        return tEnd;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public String getClientSurname() {
+        return clientSurname;
+    }
+
+    public String getClientEmail() {
+        return clientEmail;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public Boolean getPayed() {
+        return payed;
+    }
 }
