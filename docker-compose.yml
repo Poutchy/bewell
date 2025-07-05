@@ -112,17 +112,17 @@ services:
     ports:
       - "8085:8085"
 
-#  # Notification Service
-#  notification-service:
-#    build: ./backend/notification-service
-#    ports:
-#      - "8086:8080"
-#
-#  # Frontend
-#  frontend:
-#    build: ./frontend/react-app
-#    ports:
-#      - "3000:80"
+# Notification Service
+  notification-service:
+    build: ./backend/notification-service
+    ports:
+      - "8086:8086"
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
 
 volumes:
   mysql_data:

@@ -7,13 +7,13 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 function App() {
-    const [ userId, setUserId ] = useState(initialState.userId);
     const [ userToken, setUserToken ] = useState(initialState.userToken);
+    const [ userRole, setUserRole ] = useState(initialState.userRole);
 
     // default state for the session
     useEffect(() => {
-        if(window.sessionStorage.getItem("userId") === null){
-            window.sessionStorage.setItem("userId", initialState.userId);
+        if(window.sessionStorage.getItem("userRole") === null){
+            window.sessionStorage.setItem("userId", initialState.userRole);
         }
         if(window.sessionStorage.getItem("userToken") === null){
             window.sessionStorage.setItem("userToken", initialState.userToken);
@@ -22,12 +22,12 @@ function App() {
 
     // update the session with the data from the context if the context isn't undefined otherwise update the contexte with the data from the session
     useEffect(() => {
-        if(userId !== initialState.userId){
-            window.sessionStorage.setItem("userId", userId);
+        if(userRole !== initialState.userRole){
+            window.sessionStorage.setItem("userRole", userRole);
         }else{
-            setUserId(window.sessionStorage.getItem("userId"));
+            setUserRole(window.sessionStorage.getItem("userRole"));
         }
-    }, [userId]);
+    }, [userRole]);
 
     useEffect(() => {
         if(userToken !== initialState.userToken){
@@ -52,7 +52,7 @@ function App() {
     // )
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <ContextUser.Provider value={{ userId, setUserId, userToken, setUserToken }}>
+            <ContextUser.Provider value={{ userToken, setUserToken, userRole, setUserRole }}>
                 <header>
                     <Header/>
                 </header>

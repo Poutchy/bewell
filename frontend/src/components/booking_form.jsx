@@ -9,6 +9,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { addMinutes, format as formatDate } from "date-fns";
 import { TakeAllEmployees } from "../services";
+import { Link } from "react-router-dom";
 
 export function BookingForm(props) {
     const salon = props.salon;
@@ -22,6 +23,7 @@ export function BookingForm(props) {
     const [tEnd, setTEnd] = useState(null);
     const [slotId, setSlotId] = useState(0);
     const [employeeId, setEmployeeId] = useState(0);
+    const [employeeName, setEmployeeName] = useState("");
     const [employeeList, setEmployeeList] = useState([]);
     const [submitted, setSubmitted] = useState(false);
     const [open, setOpen] = useState(false);
@@ -58,8 +60,7 @@ export function BookingForm(props) {
         e.preventDefault();
         setSubmitted(true);
 
-        if (employeeId === 0) {
-            // just stop submit, no error popup needed here
+        if (employeeId === 0 || slotId === 0 || !tStart) {
             return;
         }
 
@@ -78,6 +79,7 @@ export function BookingForm(props) {
 
     const showEmployeeError = submitted && employeeId === 0;
     const showSlotError = submitted && slotId === 0;
+    const showTimeError = submitted && !tStart;
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -98,7 +100,13 @@ export function BookingForm(props) {
                     slotProps={{ input: { readOnly: true } }}
                 />
 
-                <TimePicker label="Start Time" value={tStart} onChange={setTStart} />
+                <TimePicker
+                    label="Start Time"
+                    value={tStart}
+                    onChange={setTStart}
+                    error={showTimeError}
+                    helperText={showTimeError ? "Please select the starting time." : ""}
+                />
 
                 <TimePicker label="End Time" value={tEnd} readOnly disabled={!tEnd} />
 
@@ -107,7 +115,7 @@ export function BookingForm(props) {
                     select
                     value={slotId}
                     onChange={(e) => setSlotId(Number(e.target.value))}
-                    error={showEmployeeError}
+                    error={showSlotError}
                     helperText={showSlotError ? "Please select a time slot." : ""}
                 >
                     <MenuItem value={0}>-------</MenuItem>
@@ -122,13 +130,20 @@ export function BookingForm(props) {
                     select
                     label="Employee"
                     value={employeeId}
-                    onChange={(e) => setEmployeeId(Number(e.target.value))}
-                    error={showSlotError}
-                    helperText={showSlotError ? "Please select an employee." : ""}
+                    onChange={(e) => {
+                        const selectedId = Number(e.target.value);
+                        setEmployeeId(selectedId);
+
+                        const selectedEmp = employeeList.find(emp => emp.id === selectedId);
+                        console.log(selectedEmp);
+                        setEmployeeName(selectedEmp.name);
+                    }}
+                    error={showEmployeeError}
+                    helperText={showEmployeeError ? "Please select an employee." : ""}
                 >
                     <MenuItem value={0}>-------</MenuItem>
-                    {employeeList.map((emp) => (
-                        <MenuItem key={emp.id} value={emp.id}>
+                    {employeeList.map((emp, index) => (
+                        <MenuItem key={index} value={emp.id}>
                             {emp.name}
                         </MenuItem>
                     ))}
@@ -163,8 +178,11 @@ export function BookingForm(props) {
                         </Typography>
                     </div>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        From
+                        From {tStart ? formatDate(tStart, "h:mm a") : null} to {tEnd ? formatDate(tEnd, "h:mm a") : null}, made by {employeeName}
                     </Typography>
+                    <Link to="/payement">
+                        Pay your reservation
+                    </Link>
                 </Box>
             </Modal>
         </LocalizationProvider>

@@ -13,9 +13,11 @@ export function AppRoutes() {
             <Route path="/reviews" element={<Reviews/>} />
             <Route path="/review/:id" element={<Review/>} />
 
-            <Route path="/reservation" element={<CreateReservation />} />
+            <Route element={ <ProtectedRoutes isAllowed={isConnected()} to={"/authentication"} /> }>
+                <Route path="/reservation" element={<CreateReservation />} />
+            </Route>
 
-            <Route element={ <ProtectedRoutes isAllowed={!(isConnected())} to={"/"} /> }>
+            <Route element={ <ProtectedRoutes isAllowed={!(isConnected())} to={"/reservation"} /> }>
                 <Route path="/authentication" element={<Authentication />} />
             </Route>
             <Route path="*" element={<NotFound/>}/>
@@ -26,11 +28,9 @@ export function AppRoutes() {
 /*
                 <Route path="/review" element={<CreateReview/>} />
                 <Route path="/reservations" element={<AllReservations/>} />
+                <Route path="/payement" element={<Payement/>} />
 
 
-            <Route element={ <ProtectedRoutes isAllowed={isConnected()} to={"/authentication"} /> }>
-                <Route path="/reservation" element={<CreateReservation />} />
-                <Route path="/reservation/:id" element={<Reservation/>} />
-            </Route>
+
 
  */

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
@@ -17,6 +17,7 @@ import {
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import GoogleIcon from "@mui/icons-material/Google";
+import {useUpdateContext} from "../interface";
 
 export function Authentication() {
     const navigate = useNavigate();
@@ -24,7 +25,9 @@ export function Authentication() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [redirectAfterLogin, setRedirectAfterLogin] = useState(false);
+
+    const updateContext = useUpdateContext();
 
     useEffect(() => {
         /* global google */
@@ -42,7 +45,7 @@ export function Authentication() {
 
     async function handleCallbackResponse(response) {
         try {
-            const res = await axios.post("http://localhost:8080/api/auth/google-signin", {
+            const res = await axios.post("http://localhost:8081/api/auth/google-signin", {
                 credential: response.credential,
             });
 
@@ -52,35 +55,44 @@ export function Authentication() {
             const userObject = jwtDecode(response.credential);
             setUser(userObject);
 
-            navigate("/");
+            navigate("/reservation");
         } catch (err) {
             console.error("Backend verification failed", err);
             alert("Google login failed. Please try again.");
         }
     }
 
+    if (redirectAfterLogin) {
+        return <Navigate to="/reservation" replace />;
+    }
+
+
     async function handleEmailPasswordSignIn(e) {
         e.preventDefault();
         setError(null);
-        setLoading(true);
 
         try {
-            const res = await axios.post("http://localhost:8080/api/auth/signin", {
-                username: email,  // map email to username
+            const res = await axios.post("http://localhost:8081/api/auth/signin", {
+                username: email,
                 password: password,
             });
 
             const { token, role } = res.data;
 
-            localStorage.setItem("jwt", token);
-            localStorage.setItem("role", role); // optional: use it for frontend logic
+            await updateContext({ token, role });
 
-            navigate("/");
+            // Redirect immediately after context update
+            navigate("/reservation", { replace: true });
+
+            // Save to localStorage for refresh safety
+            //localStorage.setItem("jwt", token);
+            //localStorage.setItem("role", role);
+
+            // Now, let the redirect happen after context update
+            setRedirectAfterLogin(true);
         } catch (err) {
             console.error(err);
             setError("Invalid username or password");
-        } finally {
-            setLoading(false);
         }
     }
 
@@ -180,9 +192,8 @@ export function Authentication() {
                         fullWidth
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
-                        disabled={loading}
                     >
-                        {loading ? <CircularProgress size={24} /> : "Sign In"}
+                        {"Sign In"}
                     </Button>
                 </Box>
 
