@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/booking_service
     username: tahabens
-    password: taassbewell   # ✅ ADD THIS
+    password: taassbewell
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -38,9 +38,9 @@ app:
 
 services:
   salon:
-    url: ${SERVICES_SALON_URL:http://salon-service:8080}
+    url: ${SERVICES_SALON_URL:http://salon-service:8085}
   client:
-    url: ${SERVICES_CLIENT_URL:http://client-service:8080}
+    url: ${SERVICES_CLIENT_URL:http://client-service:8088}
 
 server:
   port: 8082

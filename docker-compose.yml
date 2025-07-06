@@ -19,7 +19,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - ./docker/mysql:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
@@ -58,8 +58,8 @@ services:
       - "8088:8088"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/client_service
-      SPRING_DATASOURCE_USERNAME: ${APP_DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${APP_DB_PASSWORD}
+      SPRING_DATASOURCE_USERNAME: tahabens
+      SPRING_DATASOURCE_PASSWORD: taassbewell
 
   # Booking Service
   booking-service:
@@ -71,8 +71,8 @@ services:
       - "8082:8082"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/booking_service
-      SPRING_DATASOURCE_USERNAME: ${APP_DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${APP_DB_PASSWORD}
+      SPRING_DATASOURCE_USERNAME: tahabens
+      SPRING_DATASOURCE_PASSWORD: taassbewell
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: user
