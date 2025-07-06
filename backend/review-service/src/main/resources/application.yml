@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: review-service
+  data:
+    mongodb:
+      uri: mongodb+srv://thbens:Tahabens18@bewell.2dsrdxp.mongodb.net/review_microservice?retryWrites=true&w=majority&appName=Bewell
+
+server:
+  port: 8084
