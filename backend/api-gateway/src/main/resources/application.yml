@@ -20,7 +20,7 @@ spring:
             - id: payment-service
               uri: http://payment-service:8087
               predicates:
-                - Path=/api/payments/**
+                - Path=/api/payment/**
             - id: review-service
               uri: http://review-service:8084
               predicates:

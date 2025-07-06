@@ -63,10 +63,10 @@ public class PayPalService {
 
     private Payment getPayment(PaymentRequest paymentRequest, List<Transaction> transactions) {
         Payer payer = new Payer();
-        payer.setPaymentMethod(paymentRequest.getMethod()); // "PayPal" or "credit_card"
+        payer.setPaymentMethod(paymentRequest.getMethod());
 
         Payment payment = new Payment();
-        payment.setIntent("sale"); // "sale", "authorize", or "order"
+        payment.setIntent("sale");
         payment.setPayer(payer);
         payment.setTransactions(transactions);
 
@@ -91,7 +91,7 @@ public class PayPalService {
     @Transactional
     public PaymentDTO savePaymentDetails() {
 
-        paymentSaved.setStatus(PaymentStatus.COMPLETED); // Set initial status to PENDING
+        paymentSaved.setStatus(PaymentStatus.COMPLETED);
 
         PaymentDetails finalPayment = paymentRepository.save(paymentSaved);
         return mapToPaymentDTO(finalPayment);

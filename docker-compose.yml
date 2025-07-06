@@ -82,16 +82,16 @@ services:
       APP_RABBITMQ_ROUTINGKEY_BOOKING_CREATED: rk.booking.booking-created
 
 #  # Payment Service
-#  payment-service:
-#    build: ./backend/payment-service
-#    depends_on:
-#      - mysql
-#    ports:
-#      - "8087:8087"
-#    environment:
-#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/payment_service
-#      SPRING_DATASOURCE_USERNAME: ${APP_DB_USER}
-#      SPRING_DATASOURCE_PASSWORD: ${APP_DB_PASSWORD}
+  payment-service:
+    build: ./backend/payement-service
+    depends_on:
+      - mysql
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/payment_service
+      SPRING_DATASOURCE_USERNAME: ${APP_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${APP_DB_PASSWORD}
 
   # Review Service
   review-service:
