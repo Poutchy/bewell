@@ -8,6 +8,11 @@ spring:
     password: taassbewell
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  jpa:
+    hibernate:
+      ddl-auto: update              # ✅ Manages schema
+    database-platform: org.hibernate.dialect.MySQL8Dialect  # ✅ Tells Hibernate you're using MySQL
+    show-sql: true
 
   sql:
     init:
@@ -16,7 +21,6 @@ spring:
   session:
     jdbc:
       initialize-schema: always
-    # store-type: jdbc
 
   rabbitmq:
     host: ${SPRING_RABBITMQ_HOST:rabbitmq}
@@ -39,4 +43,4 @@ services:
     url: ${SERVICES_CLIENT_URL:http://client-service:8088}
 
 server:
-  port: 8086
+  port: 8082
