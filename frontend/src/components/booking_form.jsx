@@ -8,8 +8,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { addMinutes, format as formatDate } from "date-fns";
-import { TakeAllEmployees } from "../services";
-import { Link } from "react-router-dom";
+import { TakeAllEmployees, createPaypalPayment } from "../services";
 
 export function BookingForm(props) {
     const salon = props.salon;
@@ -70,11 +69,21 @@ export function BookingForm(props) {
             serviceId,
             slotId,
             employeeId,
-            tStart: tStart ? formatDate(tStart, "h:mm a") : null,
-            tEnd: tEnd ? formatDate(tEnd, "h:mm a") : null,
+            start: tStart ? formatDate(tStart, "h:mm a") : null,
+            end: tEnd ? formatDate(tEnd, "h:mm a") : null,
         };
         console.log("Submitted:", formData);
         handleOpen();
+    };
+
+    const handlePayNow = async () => {
+        try {
+            const approvalUrl = await createPaypalPayment(service.price);
+            window.location.href = approvalUrl;
+        } catch (err) {
+            console.error("Error creating PayPal payment:", err);
+            alert("Could not initiate payment.");
+        }
     };
 
     const showEmployeeError = submitted && employeeId === 0;
@@ -180,9 +189,9 @@ export function BookingForm(props) {
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                         From {tStart ? formatDate(tStart, "h:mm a") : null} to {tEnd ? formatDate(tEnd, "h:mm a") : null}, made by {employeeName}
                     </Typography>
-                    <Link to="/payement">
+                    <Button onClick={handlePayNow}>
                         Pay your reservation
-                    </Link>
+                    </Button>
                 </Box>
             </Modal>
         </LocalizationProvider>
