@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: salon-service
+  neo4j:
+    uri: neo4j+s://6effe778.databases.neo4j.io
+    authentication:
+      username: neo4j
+      password: 0c8VCNcrx_6Q08_ZufEloce6hbOxyo503aDvmbG3FfE
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+
+server:
+  port: 8085
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          neo4j: DEBUG

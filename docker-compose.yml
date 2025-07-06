@@ -2,6 +2,7 @@ services:
 
   # API Gateway
   api-gateway:
+    image: bewell/api-gateway:latest
     build: ./backend/api-gateway
     ports:
       - "8080:8080"
@@ -13,9 +14,9 @@ services:
       - auth-service
 
 
-  # MySQL Database
+  # MySQ Database
   mysql:
-    image: mysql:8
+    image: bewell/mysql:8
     environment:
       - MYSQL_ROOT_PASSWORD=root
     ports:
@@ -26,6 +27,7 @@ services:
 
   # Auth Service
   auth-service:
+    image: bewell/auth-service:latest
     build: ./backend/auth-service
     depends_on:
       - mysql
@@ -38,7 +40,7 @@ services:
 
   # RabbitMQ
   rabbitmq:
-    image: rabbitmq:3.11-management
+    image: bewell/rabbitmq:3.11-management
     container_name: rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: user
@@ -51,6 +53,7 @@ services:
 
   # User Service
   user-service:
+    image: bewell/user-service:latest
     build: ./backend/user-service
     depends_on:
       - mysql
@@ -63,10 +66,13 @@ services:
 
   # Booking Service
   booking-service:
+    image: bewell/booking-service:latest
     build: ./backend/booking-service
     depends_on:
       - mysql
       - rabbitmq
+      - user-service
+      - salon-service
     ports:
       - "8082:8082"
     environment:
@@ -81,7 +87,7 @@ services:
       APP_RABBITMQ_QUEUE_BOOKING_CREATED: bewell-queue
       APP_RABBITMQ_ROUTINGKEY_BOOKING_CREATED: rk.booking.booking-created
 
-#  # Payment Service
+  # Payment Service
   payment-service:
     build: ./backend/payement-service
     depends_on:
@@ -90,11 +96,12 @@ services:
       - "8087:8087"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/payment_service
-      SPRING_DATASOURCE_USERNAME: ${APP_DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${APP_DB_PASSWORD}
+      SPRING_DATASOURCE_USERNAME: tahabens
+      SPRING_DATASOURCE_PASSWORD: taasstbewell
 
   # Review Service
   review-service:
+    image: bewell/review-service:latest
     build: ./backend/review-service
     environment:
       - SPRING_DATA_MONGODB_URI
@@ -103,6 +110,7 @@ services:
 
   # Salon Service
   salon-service:
+    image: bewell/salon-service:latest
     build: ./backend/salon-service
     environment:
       - SPRING_NEO4J_URI
@@ -114,7 +122,16 @@ services:
 
 # Notification Service
   notification-service:
+    image: bewell/notification-service:latest
     build: ./backend/notification-service
+    depends_on:
+      - rabbitmq
+    environment:
+      SPRING_RABBITMQ_USERNAME: user
+      SPRING_RABBITMQ_PASSWORD: password
+      APP_RABBITMQ_EXCHANGE: bewell-exchange
+      APP_RABBITMQ_QUEUE_BOOKING_CREATED: bewell-queue
+      APP_RABBITMQ_ROUTINGKEY_BOOKING_CREATED: rk.booking.booking-created
     ports:
       - "8086:8086"
 
