@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-service
+  name: user-service
   namespace: bewell
   labels:
-    app: auth-service
+    app: user-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth-service
+      app: user-service
   template:
     metadata:
       labels:
-        app: auth-service
+        app: user-service
     spec:
       containers:
-        - name: auth-service
-          image: bewell/auth-service:latest
+        - name: user-service
+          image: bewell/user-service:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8081
+            - containerPort: 8088

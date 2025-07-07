@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Lista dei servizi
-SERVICES=("api-gateway" "auth-service" "booking-service" "notification-service", "payment-service" "user-service", "salon-service", "review-service", "message-common")
+SERVICES=("api-gateway" "auth-service" "booking-service" "notification-service", "payment-service" "user-service", "salon-service", "review-service", "message-common", "mysql-service", "rabbitmq-service")
 
 # Crea le cartelle se non esistono
 mkdir -p k8s/deployment

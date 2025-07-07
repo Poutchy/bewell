@@ -1,6 +1,5 @@
 package com.taass.payement_service.dto;
 
-import com.taass.payement_service.model.PaymentStatus;
 import lombok.*;
 
 @Data
@@ -15,6 +14,5 @@ public class PaymentRequest {
     private String description; // Description of the payment
     private Long bookingId; // ID of the booking associated with this payment
     private Long clientId; // ID of the client making the payment
-    private PaymentStatus status; // Status of the payment (e.g., "pending", "completed", "failed")
     private String createdAt; // Timestamp of when the payment was created
 }
