@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-common
+  namespace: bewell
+  labels:
+    app: message-common
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: message-common
+  template:
+    metadata:
+      labels:
+        app: message-common
+    spec:
+      containers:
+        - name: message-common
+          image: bewell/message-common:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8095

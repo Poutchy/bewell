@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: booking-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/booking_service
+    username: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  sql:
+    init:
+      mode: always
+
+  session:
+    jdbc:
+      initialize-schema: always
+    # store-type: jdbc
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+app:
+  rabbitmq:
+    exchange: bewell.exchange
+    queue:
+      booking-created-queue: booking.booking-created
+    routingkey:
+      booking-created: rk.booking.booking-created
+
+services:
+  salon:
+    url: http://localhost:8085
+  client:
+    url: http://localhost:8088
+
+server:
+  port: 8082
+
+logging:
+  level:
+    root: INFO
+    it.unito.orderservice: DEBUG

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-service
+  namespace: bewell
+  labels:
+    app: booking-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: booking-service
+  template:
+    metadata:
+      labels:
+        app: booking-service
+    spec:
+      containers:
+        - name: booking-service
+          image: bewell/booking-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8082
+          env:
+            - name: SPRING_RABBITMQ_HOST
+              value: "rabbitmq" # Nome del servizio RabbitMQ nel cluster
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672" # Porta predefinita di RabbitMQ
+            - name: SPRING_RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: RABBITMQ_DEFAULT_USER
+            - name: SPRING_RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: RABBITMQ_DEFAULT_PASS
+            - name: APP_RABBITMQ_EXCHANGE
+              value: "bewell.exchange"
+            - name: APP_RABBITMQ_QUEUE_BOOKING_CREATED
+              value: "booking.booking-created"
+            - name: APP_RABBITMQ_ROUTINGKEY_BOOKING_CREATED
+              value: "rk.booking.created"
+            - name: SERVICES_SALON_URL
+              value: "http://salon-service:8085" # Nome del servizio Salon nel cluster
+            - name: SERVICES_CLIENT_URL
+              value: "http://client-service:8088" # Nome del servizio Client nel cluster

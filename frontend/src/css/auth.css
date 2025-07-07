@@ -1,0 +1,47 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: space-evenly;
+}
+
+.go_back_button {
+    margin: 1em;
+}
+
+.home-button {
+    margin: 1em;
+}
+
+.form {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: space-evenly;
+}
+
+.inputs-divs {
+    display: flex;
+    flex-direction: column;
+}
+
+.form>* {
+    margin: 5%;
+}
+
+.inputs-divs>* {
+    margin: 5px;
+}
+
+
+
+.err_message {
+    color: red;
+}
+
+.form_div {
+    display: flex;
+    flex-direction: column;
+}

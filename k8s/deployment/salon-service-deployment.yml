@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: salon-service
+  namespace: bewell
+  labels:
+    app: salon-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: salon-service
+  template:
+    metadata:
+      labels:
+        app: salon-service
+    spec:
+      containers:
+        - name: salon-service
+          image: bewell/salon-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8085

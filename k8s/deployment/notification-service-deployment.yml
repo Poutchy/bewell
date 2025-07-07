@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  namespace: bewell
+  labels:
+    app: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: bewell/notification-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8083
+          env:
+            - name: SPRING_RABBITMQ_HOST
+              value: "rabbitmq" # Nome del servizio RabbitMQ nel cluster
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672" # Porta predefinita di RabbitMQ
+            - name: SPRING_RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: RABBITMQ_DEFAULT_USER
+            - name: SPRING_RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: RABBITMQ_DEFAULT_PASS
+            - name: APP_RABBITMQ_EXCHANGE
+              value: "bewell.exchange"
+            - name: APP_RABBITMQ_QUEUE_BOOKING_CREATED
+              value: "booking.booking-created"
+            - name: APP_RABBITMQ_ROUTINGKEY_BOOKING_CREATED
+              value: "rk.booking.created"

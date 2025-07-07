@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: payment-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/payment_service}
+    username: ${SPRING_DATASOURCE_USERNAME:tahabens}
+    password: ${SPRING_DATASOURCE_PASSWORD:taassbewell}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8083
+
+paypal:
+  client-id: AcCjHBKknuXlemDA6MCoEm_L-d6QDruhH4uSqKhHRUcl5y_caeV_KBt7LJR_HA2WK4iHoVupb7S2VVmQ
+  client-secret: EAW9ZD1UeaD0WJI0e1CDKbPJRIn73E2w3WCXDBB5af91Gz5YWUGS7R9Kg-2Uac5Dz9bX4GLozXHBK6Oz
+  mode: sandbox
