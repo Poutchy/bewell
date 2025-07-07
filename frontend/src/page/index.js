@@ -5,4 +5,5 @@ export * from "./reviews";
 export * from "./not_found";
 export * from "./create_reservation";
 export * from "./authentication";
-export * from "./validate_reservation";
+export * from "./payment_success_page";
+export * from "./payment_cancel_page";

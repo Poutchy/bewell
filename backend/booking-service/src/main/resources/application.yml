@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update              # ✅ Manages schema
+      ddl-auto: create              # ✅ Manages schema
     database-platform: org.hibernate.dialect.MySQL8Dialect  # ✅ Tells Hibernate you're using MySQL
     show-sql: true
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
@@ -17,7 +17,6 @@ import {
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import GoogleIcon from "@mui/icons-material/Google";
-import {useUpdateContext} from "../interface";
 
 export function Authentication() {
     const navigate = useNavigate();
@@ -25,9 +24,7 @@ export function Authentication() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
-    const [redirectAfterLogin, setRedirectAfterLogin] = useState(false);
-
-    const updateContext = useUpdateContext();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         /* global google */
@@ -55,44 +52,35 @@ export function Authentication() {
             const userObject = jwtDecode(response.credential);
             setUser(userObject);
 
-            navigate("/reservation");
+            navigate("/");
         } catch (err) {
             console.error("Backend verification failed", err);
             alert("Google login failed. Please try again.");
         }
     }
 
-    if (redirectAfterLogin) {
-        return <Navigate to="/reservation" replace />;
-    }
-
-
     async function handleEmailPasswordSignIn(e) {
         e.preventDefault();
         setError(null);
+        setLoading(true);
 
         try {
             const res = await axios.post("http://localhost:8081/api/auth/signin", {
-                username: email,
-                password: password,
+                username: email,  // map email to username
+                password,
             });
 
             const { token, role } = res.data;
 
-            await updateContext({ token, role });
+            localStorage.setItem("jwt", token);
+            localStorage.setItem("role", role); // optional: use it for frontend logic
 
-            // Redirect immediately after context update
-            navigate("/reservation", { replace: true });
-
-            // Save to localStorage for refresh safety
-            //localStorage.setItem("jwt", token);
-            //localStorage.setItem("role", role);
-
-            // Now, let the redirect happen after context update
-            setRedirectAfterLogin(true);
+            navigate("/");
         } catch (err) {
             console.error(err);
             setError("Invalid username or password");
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -192,8 +180,9 @@ export function Authentication() {
                         fullWidth
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
+                        disabled={loading}
                     >
-                        {"Sign In"}
+                        {loading ? <CircularProgress size={24} /> : "Sign In"}
                     </Button>
                 </Box>
 

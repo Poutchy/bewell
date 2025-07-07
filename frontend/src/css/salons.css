@@ -2,6 +2,7 @@
     display: flex;
     height: 100vh;
     background-color: #f3f4f6;
+    flex-direction: row;
 }
 
 .flex-child {
@@ -27,28 +28,51 @@
 
 .salon-list-item {
     padding: 16px;
-    border-bottom: 1px solid #e5e7eb; /* light gray */
+    border-bottom: 1px solid #e5e7eb;
     cursor: pointer;
     background-color: white;
     transition: background-color 0.2s ease;
 }
 
 .salon-list-item:hover {
-    background-color: #f9fafb; /* light hover */
+    background-color: #f9fafb;
 }
 
 .salon-list-item.selected {
-    background-color: #dbeafe; /* light blue for selected */
+    background-color: #dbeafe;
 }
 
 .salon-list-title {
-    font-size: 1.125rem; /* ~text-lg */
-    font-weight: 600; /* semibold */
+    font-size: 1.125rem;
+    font-weight: 600;
     margin: 0 0 4px 0;
 }
 
 .salon-list-subtitle {
-    font-size: 0.875rem; /* ~text-sm */
-    color: #4b5563; /* gray-600 */
+    font-size: 0.875rem;
+    color: #4b5563;
     margin: 0;
+}
+
+/* ===== Responsive Styles ===== */
+@media (max-width: 768px) {
+    .flex-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .flex-child {
+        width: 100%;
+        margin-right: 0 !important;
+        padding: 16px;
+    }
+
+    .flex-child.left {
+        border-left: none;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .flex-child:first-child {
+        margin-bottom: 20px;
+    }
 }
