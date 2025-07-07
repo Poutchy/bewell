@@ -2,9 +2,13 @@ spring:
   application:
     name: payment-service
   datasource:
-    url: jdbc:mysql://localhost:3306/payment_service
-    username: root
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3307/payment_service}
+    username: ${SPRING_DATASOURCE_USERNAME:tahabens}
+    password: ${SPRING_DATASOURCE_PASSWORD:taassbewell}
     driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 server:
   port: 8083

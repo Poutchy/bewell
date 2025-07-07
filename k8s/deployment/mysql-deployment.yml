@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  namespace: bewell
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name:  mysql
+          image: mysql:8 # Immagine ufficiale da Docker Hub
+          imagePullPolicy: IfNotPresent # Tenta di usare l'immagine locale se presente
+          ports:
+            - containerPort: 3306
+          envFrom:
+            - secretRef:
+                name: mysql-secret
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+          # Readiness e Liveness probes sono importanti per la stabilità
+          readinessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - -h
+                - localhost
+                - -U
+                - root
+                - -p$$MYSQL_ROOT_PASSWORD
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - -h
+                - localhost
+                - -U
+                - root
+                - -p$$MYSQL_ROOT_PASSWORD
+            initialDelaySeconds: 45
+            periodSeconds: 20
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: mysql-pvc

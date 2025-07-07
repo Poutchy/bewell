@@ -2,13 +2,13 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:mysql://localhost:3306/auth_service
-    username: tahabens
-    password: taassbewell
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3306/auth_service}
+    username: ${SPRING_DATASOURCE_USERNAME:tahabens}
+    password: ${SPRING_DATASOURCE_PASSWORD:taassbewell}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
   sql:
     init:
