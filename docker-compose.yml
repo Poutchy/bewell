@@ -18,19 +18,12 @@ services:
     image: mysql:8
     container_name: mysql
     environment:
-      MYSQL_DATABASE: auth_service
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: tahabens
-      MYSQL_PASSWORD: taassbewell
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - ./docker/mysql:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD-SHELL", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p$$MYSQL_ROOT_PASSWORD' ]
-      interval: 10s
-      retries: 5
 
   # Auth Service
   auth-service:
@@ -63,8 +56,7 @@ services:
     image: bewell/user-service:latest
     build: ./backend/user-service
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
     ports:
       - "8088:8088"
     environment:
@@ -77,14 +69,10 @@ services:
     image: bewell/booking-service:latest
     build: ./backend/booking-service
     depends_on:
-      mysql:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_started
-      user-service:
-        condition: service_started
-      salon-service:
-        condition: service_started
+      - mysql
+      - rabbitmq
+      - user-service
+      - salon-service
     ports:
       - "8082:8082"
     environment:
@@ -104,12 +92,11 @@ services:
     image: bewell/payment-service:latest
     build: ./backend/payement-service
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
     ports:
       - "8087:8087"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/payment_service
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/auth_service
       SPRING_DATASOURCE_USERNAME: tahabens
       SPRING_DATASOURCE_PASSWORD: taassbewell
 
@@ -139,8 +126,7 @@ services:
     image: bewell/notification-service:latest
     build: ./backend/notification-service
     depends_on:
-      rabbitmq:
-        condition: service_started
+      - rabbitmq
     environment:
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_USERNAME: user
